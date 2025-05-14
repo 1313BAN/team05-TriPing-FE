@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+@theme {
+  --color-primary: #e85f5c;
+}
