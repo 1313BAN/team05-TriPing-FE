@@ -1,3 +1,6 @@
+<script setup>
+import DynamicMap from '../components/DynamicMap.vue'
+</script>
 <template>
-  <div class="p-4 text-center text-2xl">홈 페이지</div>
+  <DynamicMap :lat="37.5665" :lng="126.978" :zoom="13" />
 </template>

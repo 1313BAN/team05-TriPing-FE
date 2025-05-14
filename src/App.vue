@@ -1,12 +1,19 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import BottomDock from './components/BottomDock.vue'
+import MenuBar from './components/MenuBar.vue'
 import { ref } from 'vue'
-
 const text = ref('')
-</script>
 
+import { onMounted } from 'vue'
+
+onMounted(() => {
+  console.log('Window height:', window.innerHeight)
+})
+</script>
 <template>
-  <BottomDock />
+  <MenuBar />
+  <div class="flex justify-center items-center h-[calc(100vh-63px)]">
+    <router-view />
+  </div>
 </template>
