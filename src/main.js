@@ -4,8 +4,8 @@ import App from './App.vue'
 import 'primeicons/primeicons.css'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
-
-import router from './plugins/router' // ✅ 라우터 import
+import pinia from './plugins/pinia'
+import router from './plugins/router'
 import PrimeVueComponents from './plugins/primevue'
 
 const app = createApp(App)
@@ -24,5 +24,6 @@ app.use(PrimeVue, {
 })
 
 app.use(PrimeVueComponents)
-app.use(router) // ✅ 반드시 추가
+app.use(router)
+app.use(pinia)
 app.mount('#app')

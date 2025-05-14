@@ -1,6 +1,13 @@
 <script setup>
+console.log('[DEBUG] script setup 진입함')
 import DynamicMap from '../components/DynamicMap.vue'
+import { useGeolocation } from '../composables/useGeolocation'
+
+console.log('[GEO] useGeolocation 호출 시작')
+useGeolocation(true, 5)
+console.log('[GEO] useGeolocation 호출 완료')
 </script>
+
 <template>
-  <DynamicMap :lat="37.5665" :lng="126.978" :zoom="18" />
+  <DynamicMap :zoom="18" />
 </template>

@@ -2,6 +2,7 @@
 import MenuBar from './components/MenuBar.vue'
 import { ref } from 'vue'
 const text = ref('')
+
 </script>
 <template>
 <div class="h-screen flex flex-col md:justify-center">
