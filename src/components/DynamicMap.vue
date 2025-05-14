@@ -25,13 +25,13 @@ onMounted(() => {
 function initMap() {
   const mapOptions = {
     center: new naver.maps.LatLng(lat.value, lng.value),
-    zoom: 18,
+    zoom: 18
   }
   map = new naver.maps.Map('map', mapOptions)
 
   marker = new naver.maps.Marker({
     position: new naver.maps.LatLng(lat.value, lng.value),
-    map: map,
+    map: map
   })
 }
 
