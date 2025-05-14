@@ -1,8 +1,7 @@
-<!-- components/DynamicMap.vue -->
 <script setup>
 defineOptions({ name: 'DynamicMap' })
 
-import { onMounted, ref, onBeforeUnmount } from 'vue'
+import { onMounted, ref, onBeforeUnmount, nextTick } from 'vue'
 
 const props = defineProps({
   lat: { type: Number, default: 37.5665 },
@@ -13,7 +12,8 @@ const props = defineProps({
 const mapRef = ref(null)
 let mapInstance = null
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick()
   mapInstance = new naver.maps.Map(mapRef.value, {
     center: new naver.maps.LatLng(props.lat, props.lng),
     zoom: props.zoom
@@ -28,6 +28,6 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="mapRef"
-    class="w-full h-full md:w-[70%] md:h-[80%] mx-auto border-gray-200 md:rounded-3xl overflow-hidden md:shadow-xl"
+    class="w-full h-full"
   ></div>
 </template>
