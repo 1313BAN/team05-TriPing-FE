@@ -1,11 +1,7 @@
 <script setup>
-console.log('[DEBUG] script setup 진입함')
 import DynamicMap from '../components/DynamicMap.vue'
 import { useGeolocation } from '../composables/useGeolocation'
-
-console.log('[GEO] useGeolocation 호출 시작')
-useGeolocation(true, 5)
-console.log('[GEO] useGeolocation 호출 완료')
+useGeolocation(true, 5) // 위치 지속 추적, 5m 이상 이동 시 갱신
 </script>
 
 <template>

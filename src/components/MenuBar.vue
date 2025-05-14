@@ -17,9 +17,9 @@
 
           <!-- 데스크탑: 오른쪽 세로 버튼형 아이콘 -->
           <div
-            class="hidden md:flex items-center justify-center p-4 bg-gray-50 shadow-lg border border-gray-200 rounded-xl md:hover:bg-gray-200 transition-colors"
+            class="hidden md:flex items-center justify-center p-4 border-l-gray-200 border border-gray-200 rounded-xl md:hover:bg-gray-100 transition-colors"
           >
-            <i :class="`pi ${item.icon}`" style="font-size: 40px"></i>
+            <i :class="`pi ${item.icon}`" style="font-size: 28px"></i>
           </div>
         </RouterLink>
       </li>
