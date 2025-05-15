@@ -4,6 +4,7 @@ import { useLocationStore } from '../stores/locationStore'
 import { storeToRefs } from 'pinia'
 import { setMockMarker } from '@/composables/useGlobalGeolocation'
 import MyLocationButton from '@/components/MyLocationButton.vue'
+import SearchButton from './SearchButton.vue'
 
 const { lat, lng } = storeToRefs(useLocationStore())
 
@@ -53,5 +54,6 @@ function updateMarker(newLat, newLng) {
   <div class="w-full h-full relative">
     <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl"></div>
     <MyLocationButton />
+    <SearchButton />
   </div>
 </template>
