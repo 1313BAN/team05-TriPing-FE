@@ -1,8 +1,14 @@
 import { useDevStore } from '../stores/devStore'
 import { useLocationStore } from '../stores/locationStore'
+import { animateMarker } from '@/utils/mapUtils'
 // 전역에서 선언되어야 유지됨
 let watchId = null
 let mockPosition = { lat: 37.5665, lng: 126.978 } // 초기 mock 위치
+let marker = null
+
+export function setMockMarker(m) {
+  marker = m
+}
 
 export function startGlobalGeolocation(minDistance = 5) {
   stopGlobalGeolocation() // 항상 초기화하고 시작
@@ -61,9 +67,8 @@ export function stopGlobalGeolocation() {
   window.removeEventListener('keydown', handleKeyMove)
 }
 
-// 🔼 방향키로 mock 위치 이동
 function handleKeyMove(e) {
-  const step = 0.0001 // 이동 단위
+  const step = 0.0001
   switch (e.key) {
     case 'ArrowUp':
       mockPosition.lat += step
@@ -83,5 +88,11 @@ function handleKeyMove(e) {
 
   const store = useLocationStore()
   store.update(mockPosition.lat, mockPosition.lng)
+
+  if (marker) {
+    const current = marker.getPosition()
+    animateMarker(marker, current.lat(), current.lng(), mockPosition.lat, mockPosition.lng)
+  }
+
   console.log('[DEV MODE] 방향키 위치 갱신:', mockPosition.lat, mockPosition.lng)
 }

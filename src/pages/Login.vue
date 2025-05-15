@@ -24,7 +24,7 @@
         <label for="remember" class="ml-2 text-sm text-gray-600">자동 로그인</label>
       </div>
 
-      <Button label="로그인" class="w-full" />
+      <Button label="로그인" class="btn-primary w-full" />
 
       <div class="flex justify-between text-sm mt-4 text-blue-600">
         <a href="#" class="hover:underline">비밀번호 찾기</a>

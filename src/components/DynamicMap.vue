@@ -2,6 +2,7 @@
 import { onMounted, watch } from 'vue'
 import { useLocationStore } from '../stores/locationStore'
 import { storeToRefs } from 'pinia'
+import { setMockMarker } from '@/composables/useGlobalGeolocation'
 
 const { lat, lng } = storeToRefs(useLocationStore())
 
@@ -33,13 +34,15 @@ function initMap() {
     position: new naver.maps.LatLng(lat.value, lng.value),
     map: map
   })
+
+  setMockMarker(marker)
 }
 
 function updateMarker(newLat, newLng) {
   if (marker && map) {
     const position = new naver.maps.LatLng(newLat, newLng)
     marker.setPosition(position)
-    map.setCenter(position)
+    // map.setCenter(position)
   }
 }
 </script>
