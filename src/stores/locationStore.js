@@ -12,18 +12,6 @@ export const useLocationStore = defineStore('location', {
     update(lat, lng) {
       this.lat = lat
       this.lng = lng
-    },
-
-    // 개발자 모드용 위치 이동
-    moveBy(deltaLat, deltaLng) {
-      if (this.lat !== null && this.lng !== null) {
-        this.lat += deltaLat
-        this.lng += deltaLng
-      }
-    },
-
-    toggleDevMode() {
-      this.isDevMode = !this.isDevMode
     }
   }
 })

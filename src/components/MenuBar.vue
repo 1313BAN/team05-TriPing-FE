@@ -31,8 +31,9 @@
 import { RouterLink } from 'vue-router'
 
 const navItems = [
-  { path: '/', icon: 'pi-home', label: '홈' },
-  { path: '/myreview', icon: 'pi-comments', label: '내 리뷰' },
-  { path: '/mypage', icon: 'pi-user', label: '마이페이지' }
+  { path: '/', icon: 'pi-home' },
+  { path: '/myreview', icon: 'pi-comments' },
+  { path: '/mypage', icon: 'pi-user' },
+  { path: '/setting', icon: 'pi-cog' }
 ]
 </script>
