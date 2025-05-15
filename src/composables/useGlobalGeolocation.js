@@ -1,22 +1,33 @@
-// src/composables/useGlobalGeolocation.js
+import { useDevStore } from '../stores/devStore'
 import { useLocationStore } from '../stores/locationStore'
-
-let watchId = null // 전역 위치 추적 ID
+// 전역에서 선언되어야 유지됨
+let watchId = null
+let mockPosition = { lat: 37.5665, lng: 126.978 } // 초기 mock 위치
 
 export function startGlobalGeolocation(minDistance = 5) {
+  stopGlobalGeolocation() // 항상 초기화하고 시작
+
   const store = useLocationStore()
+  const devStore = useDevStore()
 
-  if (watchId !== null) return // 이미 추적 중이면 무시
+  if (devStore.devMode) {
+    store.update(mockPosition.lat, mockPosition.lng)
+    console.log('[DEV MODE] Mock 위치 초기 설정됨')
 
+    // 방향키 이벤트 리스너 등록
+    window.addEventListener('keydown', handleKeyMove)
+
+    return
+  }
+
+  // 실제 위치 추적
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371000
     const dLat = ((lat2 - lat1) * Math.PI) / 180
     const dLon = ((lon2 - lon1) * Math.PI) / 180
     const a =
       Math.sin(dLat / 2) ** 2 +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) ** 2
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
     return R * c
   }
@@ -33,15 +44,11 @@ export function startGlobalGeolocation(minDistance = 5) {
     }
   }
 
-  watchId = navigator.geolocation.watchPosition(
-    handlePosition,
-    console.error,
-    {
-      enableHighAccuracy: true,
-      maximumAge: 1000,
-      timeout: 10000,
-    }
-  )
+  watchId = navigator.geolocation.watchPosition(handlePosition, console.error, {
+    enableHighAccuracy: true,
+    maximumAge: 1000,
+    timeout: 10000
+  })
 }
 
 export function stopGlobalGeolocation() {
@@ -49,4 +56,32 @@ export function stopGlobalGeolocation() {
     navigator.geolocation.clearWatch(watchId)
     watchId = null
   }
+
+  // 방향키 이벤트 제거
+  window.removeEventListener('keydown', handleKeyMove)
+}
+
+// 🔼 방향키로 mock 위치 이동
+function handleKeyMove(e) {
+  const step = 0.0001 // 이동 단위
+  switch (e.key) {
+    case 'ArrowUp':
+      mockPosition.lat += step
+      break
+    case 'ArrowDown':
+      mockPosition.lat -= step
+      break
+    case 'ArrowLeft':
+      mockPosition.lng -= step
+      break
+    case 'ArrowRight':
+      mockPosition.lng += step
+      break
+    default:
+      return
+  }
+
+  const store = useLocationStore()
+  store.update(mockPosition.lat, mockPosition.lng)
+  console.log('[DEV MODE] 방향키 위치 갱신:', mockPosition.lat, mockPosition.lng)
 }

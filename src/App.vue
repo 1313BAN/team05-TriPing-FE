@@ -1,8 +1,25 @@
 <script setup>
 import MenuBar from './components/MenuBar.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useDevStore } from '@/stores/devStore'
+import { startGlobalGeolocation, stopGlobalGeolocation } from '@/composables/useGlobalGeolocation'
+
 const text = ref('')
+
+// ✅ devMode 변경 시 위치 추적 리셋
+const devStore = useDevStore()
+
+watch(
+  () => devStore.devMode,
+  (newVal) => {
+    console.log('[devMode 변경]', newVal)
+    stopGlobalGeolocation()
+    startGlobalGeolocation()
+  },
+  { immediate: true }
+)
 </script>
+
 <template>
   <div class="h-screen flex flex-col md:justify-center">
     <div class="hidden md:block fixed top-0 left-0 p-4 z-50">

@@ -10,6 +10,12 @@ import PrimeVueComponents from './plugins/primevue'
 
 const app = createApp(App)
 
+app.config.errorHandler = (err, instance, info) => {
+  console.error('[Global Error]', err)
+  console.error('Component:', instance)
+  console.error('Info:', info)
+}
+
 app.use(PrimeVue, {
   theme: {
     preset: Aura,

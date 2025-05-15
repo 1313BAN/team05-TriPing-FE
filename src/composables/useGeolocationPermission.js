@@ -47,7 +47,9 @@ export function useGeolocationPermission(minDistance = 5) {
       }
 
       result.onchange = () => location.reload()
-    } catch {
+    } catch (err) {
+      console.error('permissions.query 실패:', err)
+
       permissionState.value = 'denied'
       errorMessage.value = '위치 권한 확인 중 오류가 발생했습니다.'
     }
