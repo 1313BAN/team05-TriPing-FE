@@ -3,11 +3,16 @@
     <div class="w-full max-w-sm p-6 bg-white rounded-lg">
       <h2 class="text-2xl font-bold text-center mb-6">로그인</h2>
 
+      <!-- 이메일 입력 -->
       <div class="mb-4">
         <label class="block text-sm mb-1">이메일</label>
         <InputText v-model="email" class="w-full" />
+        <p v-if="email && !isEmailValid" class="text-red-500 text-xs mt-1">
+          올바른 이메일 형식을 입력해주세요.
+        </p>
       </div>
 
+      <!-- 비밀번호 입력 -->
       <div class="mb-4">
         <label class="block text-sm mb-1">비밀번호</label>
         <Password
@@ -17,31 +22,64 @@
           inputClass="w-full"
           :feedback="false"
         />
+        <p v-if="password && !isPasswordValid" class="text-red-500 text-xs mt-1">
+          영문자와 숫자를 포함한 8~20자 비밀번호여야 합니다.
+        </p>
       </div>
 
+      <!-- 자동 로그인 -->
       <div class="mb-4 flex items-center">
         <Checkbox v-model="rememberMe" :binary="true" inputId="remember" />
         <label for="remember" class="ml-2 text-sm text-gray-600">자동 로그인</label>
       </div>
 
-      <Button label="로그인" class="btn-primary w-full" />
+      <!-- 로그인 실패 메시지 -->
+      <div v-if="loginFailMessage" class="text-red-500 text-sm mb-4 text-center">
+        {{ loginFailMessage }}
+      </div>
 
+      <!-- 로그인 버튼 -->
+      <Button label="로그인" class="btn-primary w-full" @click="handleLogin" />
+
+      <!-- 하단 링크 -->
       <div class="flex justify-between text-sm mt-4 text-blue-600">
         <a href="#" class="hover:underline">비밀번호 찾기</a>
-        <a href="#" class="hover:underline">회원가입</a>
+        <RouterLink to="/signup" class="hover:underline">회원가입</RouterLink>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import { RouterLink } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
+
+const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/
+const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
+
+const isEmailValid = computed(() => EMAIL_REGEX.test(email.value))
+const isPasswordValid = computed(() => PASSWORD_REGEX.test(password.value))
+
+const loginFailMessage = ref('') // 실패 메시지용 상태
+
+const handleLogin = () => {
+  // 실시간 검사는 메시지로 처리하므로, 여기선 로그인 실패만 처리
+  if (!isEmailValid.value || !isPasswordValid.value) {
+    loginFailMessage.value = ''
+    console.log('❌ 입력 형식 오류')
+    return
+  }
+
+  // ✅ 형식이 맞더라도 로그인 실패했다고 가정
+  loginFailMessage.value = '이메일 또는 비밀번호가 올바르지 않습니다.'
+  console.log('❌ 로그인 실패 (임시 처리)')
+}
 </script>

@@ -11,5 +11,9 @@ html {
 }
 
 .btn-primary {
-  @apply bg-primary text-white px-4 py-2 rounded-md border-0 hover:opacity-90;
+  @apply bg-primary text-white px-4 py-2 rounded-md border-0 hover:opacity-90 cursor-pointer;
+}
+
+.btn-small {
+  @apply text-gray-400 text-sm hover:text-gray-600 transition cursor-pointer;
 }
