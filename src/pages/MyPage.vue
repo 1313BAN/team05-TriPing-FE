@@ -28,16 +28,24 @@
       <button class="w-full btn-primary" @click="goToEdit">정보 수정</button>
     </div>
 
-    <!-- 탈퇴하기 버튼 (훨씬 아래로 배치) -->
+    <!-- 탈퇴하기 & 비밀번호 변경 버튼 -->
     <div class="mt-5 flex justify-between">
       <button class="btn-small" @click="editpassword">비밀번호 변경</button>
-      <button class="btn-small" @click="withdraw">탈퇴하기</button>
+      <button class="btn-small" @click="handleWithdrawConfirm">탈퇴하기</button>
     </div>
+
+    <!-- ✅ ConfirmDialog 삽입 -->
+    <ConfirmDialog />
   </div>
 </template>
 
 <script setup>
-import { Card } from 'primevue'
+import { useRouter } from 'vue-router'
+import { useConfirm } from 'primevue/useconfirm'
+import Card from 'primevue/card'
+
+const router = useRouter()
+const confirm = useConfirm()
 
 const user = {
   name: '장준우',
@@ -46,10 +54,28 @@ const user = {
 }
 
 const goToEdit = () => {
-  console.log('정보 수정 페이지로 이동')
+  router.push('/mypage/edit') // ✅ 수정된 경로
+}
+
+const editpassword = () => {
+  // ✅ 경로 변경: /change-password → /mypage/change-password
+  router.push('/mypage/change-password')
 }
 
 const withdraw = () => {
-  console.log('탈퇴 처리 로직 실행')
+  console.log('✅ 실제 탈퇴 처리 로직 실행')
+}
+
+const handleWithdrawConfirm = () => {
+  confirm.require({
+    message: '정말 탈퇴하시겠습니까?',
+    header: '탈퇴 확인',
+    icon: 'pi pi-exclamation-triangle',
+    rejectLabel: '아니요',
+    acceptLabel: '네, 탈퇴할게요',
+    acceptClass: 'p-button-danger',
+    accept: () => withdraw(),
+    reject: () => console.log('탈퇴 취소')
+  })
 }
 </script>
