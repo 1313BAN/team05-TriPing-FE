@@ -1,9 +1,5 @@
 <script setup>
-import { useLocationStore } from '@/stores/locationStore'
 import searchIcon from '../assets/icons/search.png'
-const store = useLocationStore()
-
-function centerToCurrentLocation() {}
 </script>
 
 <template>

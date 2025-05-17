@@ -16,7 +16,7 @@ const { permissionState, errorMessage, requestPermission } = useGeolocationPermi
     </div>
 
     <div v-else-if="permissionState === 'granted'" class="w-full h-full">
-      <DynamicMap :zoom="18" />
+      <DynamicMap />
     </div>
 
     <div v-else-if="permissionState === 'denied'" class="text-center px-4 text-red-600">

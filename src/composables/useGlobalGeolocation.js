@@ -18,7 +18,7 @@ export function startGlobalGeolocation(minDistance = 5) {
 
   if (devStore.devMode) {
     store.update(mockPosition.lat, mockPosition.lng)
-    console.log('[DEV MODE] Mock 위치 초기 설정됨')
+    // console.log('[DEV MODE] Mock 위치 초기 설정됨')
 
     // 방향키 이벤트 리스너 등록
     window.addEventListener('keydown', handleKeyMove)
@@ -94,5 +94,5 @@ function handleKeyMove(e) {
     animateMarker(marker, current.lat(), current.lng(), mockPosition.lat, mockPosition.lng)
   }
 
-  console.log('[DEV MODE] 방향키 위치 갱신:', mockPosition.lat, mockPosition.lng)
+  // console.log('[DEV MODE] 방향키 위치 갱신:', mockPosition.lat, mockPosition.lng)
 }
