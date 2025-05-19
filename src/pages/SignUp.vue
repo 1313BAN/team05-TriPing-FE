@@ -12,7 +12,7 @@
         </p>
       </div>
 
-      <!-- 닉네임 입력 (필수) -->
+      <!-- 닉네임 입력 -->
       <div class="mb-4">
         <label class="block text-sm mb-1">닉네임</label>
         <InputText v-model="nickname" class="w-full" />
@@ -79,6 +79,10 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import { getRandomNickname } from '@/utils/nicknameGenerator'
+import { signUp } from '@/api/auth' // ✅ 회원가입 API import
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // 입력 상태
 const name = ref('')
@@ -90,7 +94,7 @@ const signupMessage = ref('')
 
 // 정규표현식
 const NAME_REGEX = /^[가-힣a-zA-Z]{2,20}$/
-const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9\s]{2,16}$/ // 공백 허용
+const NICKNAME_REGEX = /^[가-힣a-zA-Z0-9\s]{2,16}$/
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
 
@@ -100,12 +104,10 @@ const STRONG_REGEX = /^.*(?=.{7,})(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&]).*$/
 
 // 유효성 검사
 const isNameValid = computed(() => NAME_REGEX.test(name.value))
-
 const isNicknameValid = computed(() => {
   const trimmed = nickname.value.trim()
   return trimmed.length > 0 && NICKNAME_REGEX.test(trimmed)
 })
-
 const isEmailValid = computed(() => EMAIL_REGEX.test(email.value))
 const isPasswordValid = computed(() => PASSWORD_REGEX.test(password.value))
 
@@ -115,33 +117,44 @@ onMounted(() => {
 })
 
 // 회원가입 처리
-const handleSignUp = () => {
+const handleSignUp = async () => {
   if (!isNameValid.value) {
     signupMessage.value = '이름 형식을 확인해주세요.'
     return
   }
-
   if (!isNicknameValid.value) {
     signupMessage.value = '닉네임 형식을 확인해주세요.'
     return
   }
-
   if (!isEmailValid.value) {
     signupMessage.value = '이메일 형식을 확인해주세요.'
     return
   }
-
   if (!isPasswordValid.value) {
     signupMessage.value = '비밀번호 형식을 확인해주세요.'
     return
   }
-
   if (password.value !== passwordConfirm.value) {
     signupMessage.value = '비밀번호가 일치하지 않습니다.'
     return
   }
 
-  signupMessage.value = '회원가입 성공! (API 연결 예정)'
-  console.log('✅ 회원가입 진행 중...')
+  // ✅ API 요청
+ try {
+  await signUp({ name: name.value, nickname: nickname.value, email: email.value, password: password.value })
+  signupMessage.value = '회원가입 성공! 로그인 페이지로 이동합니다.'
+  setTimeout(() => router.push('/login'), 500)
+} catch (err) {
+  // 에러 로그 출력 (computed/ref 문제 없이)
+  console.error('❌ 회원가입 에러:', err?.response?.data?.message || err.message || '[Unknown Error]')
+
+  // 사용자에게 보여줄 메시지
+  signupMessage.value = err?.response?.data?.message || '회원가입 중 오류가 발생했습니다.'
+}
+
 }
 </script>
+
+<style scoped>
+/* 필요 시 추가 스타일 작성 */
+</style>

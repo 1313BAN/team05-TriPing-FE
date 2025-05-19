@@ -60,16 +60,34 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
-import Dialog from 'primevue/dialog' // ✅ 추가
+import Dialog from 'primevue/dialog'
+import { userStore } from '@/stores/user'
+import { updateMyInfo } from '@/api/user'
 
-const name = ref('장준우')
-const nickname = ref('용감한 사자')
-const email = ref('email@example.com')
+const router = useRouter()
+
+// ✅ 초기값은 비어 있는 상태로 선언
+const name = ref('')
+const email = ref('')
+const nickname = ref('')
+const password = ref('') // 비밀번호도 보내야 하므로 포함
+
+// ✅ userStore.user가 준비되면 초기값 설정
+watchEffect(() => {
+  if (userStore.user) {
+    name.value = userStore.user.name
+    email.value = userStore.user.email
+    nickname.value = userStore.user.nickname
+    password.value = userStore.user.password // 실제 DB 저장된 비밀번호가 있는 경우만
+  }
+})
+
 const errorMessage = ref('')
-const showDialog = ref(false) // ✅ 다이얼로그 상태 변수
+const showDialog = ref(false)
 
 const nicknameRegex = /^[가-힣a-zA-Z0-9 ]{2,16}$/
 
@@ -83,11 +101,33 @@ const validateNickname = () => {
   }
 }
 
-const handleUpdate = () => {
+const handleUpdate = async () => {
   validateNickname()
   if (errorMessage.value) return
 
-  showDialog.value = true // ✅ 다이얼로그 띄우기
+  const updatedData = {
+    name: name.value,
+    email: email.value,
+    nickname: nickname.value,
+    password: null
+  }
+
+  console.log('🔍 서버로 전송할 데이터:', updatedData) // ✅ 이 줄 추가
+
+  try {
+    await updateMyInfo(updatedData)
+    userStore.setUser(updatedData)
+    showDialog.value = true
+
+    // ✅ 1초 후 마이페이지 이동
+    setTimeout(() => {
+      showDialog.value = false
+      router.push('/mypage')
+    }, 1000)
+  } catch (err) {
+    console.error('❌ 정보 수정 실패:', err)
+    errorMessage.value = '서버 오류로 인해 저장에 실패했습니다.'
+  }
 }
 </script>
 

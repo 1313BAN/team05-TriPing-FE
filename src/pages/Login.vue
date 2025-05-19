@@ -52,15 +52,19 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
+import api from '@/api' // ✅ axios 인스턴스 import
 
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
+const loginFailMessage = ref('')
+const router = useRouter()
 
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
@@ -68,18 +72,38 @@ const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
 const isEmailValid = computed(() => EMAIL_REGEX.test(email.value))
 const isPasswordValid = computed(() => PASSWORD_REGEX.test(password.value))
 
-const loginFailMessage = ref('') // 실패 메시지용 상태
+const handleLogin = async () => {
+  loginFailMessage.value = ''
 
-const handleLogin = () => {
-  // 실시간 검사는 메시지로 처리하므로, 여기선 로그인 실패만 처리
   if (!isEmailValid.value || !isPasswordValid.value) {
-    loginFailMessage.value = ''
     console.log('❌ 입력 형식 오류')
     return
   }
 
-  // ✅ 형식이 맞더라도 로그인 실패했다고 가정
-  loginFailMessage.value = '이메일 또는 비밀번호가 올바르지 않습니다.'
-  console.log('❌ 로그인 실패 (임시 처리)')
+  try {
+    const response = await api.post(
+      '/auth/login',
+      {
+        email: email.value,
+        password: password.value
+      },
+      {
+        validateStatus: () => true // 실패 응답도 처리
+      }
+    )
+
+    const authHeader = response.headers['authorization'] || response.headers['Authorization']
+    if (response.status === 200 && authHeader) {
+      const token = authHeader.replace('Bearer ', '')
+      localStorage.setItem('accessToken', token)
+      router.push('/') // 메인 페이지로 이동
+    } else {
+      loginFailMessage.value = '이메일 또는 비밀번호가 올바르지 않습니다.'
+      console.log('❌ 로그인 실패 상태:', response.status)
+    }
+  } catch (error) {
+    console.error('❌ 로그인 요청 오류:', error)
+    loginFailMessage.value = '서버 오류가 발생했습니다.'
+  }
 }
 </script>

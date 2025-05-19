@@ -65,18 +65,23 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Card from 'primevue/card'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import Dialog from 'primevue/dialog' // ✅ 추가
+import Dialog from 'primevue/dialog'
+import { changePassword } from '@/api/user' // ✅ API 연동
 
+// 상태 정의
+const router = useRouter()
 const currentPassword = ref('')
 const newPassword = ref('')
 const confirmPassword = ref('')
 const errorMessage = ref('')
-const showDialog = ref(false) // ✅ Dialog 상태
+const showDialog = ref(false)
 
-const handleSubmit = () => {
+// 제출 처리
+const handleSubmit = async () => {
   if (newPassword.value !== confirmPassword.value) {
     errorMessage.value = '새 비밀번호가 일치하지 않습니다.'
     return
@@ -87,11 +92,31 @@ const handleSubmit = () => {
     return
   }
 
-  errorMessage.value = ''
-  showDialog.value = true // ✅ 다이얼로그 열기
+  if (!currentPassword.value || !newPassword.value) {
+    errorMessage.value = '비밀번호를 모두 입력해주세요.'
+    return
+  }
+
+  try {
+    await changePassword({
+      currentPassword: currentPassword.value,
+      newPassword: newPassword.value
+    })
+
+    errorMessage.value = ''
+    showDialog.value = true
+
+    setTimeout(() => {
+      showDialog.value = false
+      router.push('/mypage')
+    }, 1500)
+  } catch (err) {
+    console.error('❌ 비밀번호 변경 실패:', err)
+    errorMessage.value = '현재 비밀번호가 일치하지 않거나 형식이 올바르지 않습니다.'
+  }
 }
 </script>
 
 <style scoped>
-/* 필요 시 추가 스타일 여기에 */
+/* 필요 시 여기에 스타일 추가 */
 </style>
