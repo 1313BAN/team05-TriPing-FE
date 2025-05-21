@@ -54,9 +54,7 @@
           <p v-if="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</p>
 
           <!-- 버튼 -->
-          <Button class="w-full btn-primary" @click="handleSubmit">
-            비밀번호 변경
-          </Button>
+          <Button class="w-full btn-primary" @click="handleSubmit"> 비밀번호 변경 </Button>
         </div>
       </template>
     </Card>

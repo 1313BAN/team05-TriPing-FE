@@ -1,18 +1,19 @@
-// 📄 src/store/user.js
-import { reactive } from 'vue'
+import { defineStore } from 'pinia'
 
-export const userStore = reactive({
-  user: null,
-
-  setUser(userData) {
-    this.user = userData
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    user: null
+  }),
+  actions: {
+    setUser(userData) {
+      this.user = userData
+    },
+    clearUser() {
+      this.user = null
+    }
   },
-
-  clearUser() {
-    this.user = null
+  getters: {
+    isLoggedIn: (state) => state.user !== null
   },
-
-  isLoggedIn() {
-    return this.user !== null
-  }
+  persist: true // 로컬스토리지에 자동 저장됨
 })

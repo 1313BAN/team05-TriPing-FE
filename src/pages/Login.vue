@@ -14,7 +14,7 @@
 
       <!-- 비밀번호 입력 -->
       <div class="mb-4">
-        <label class="block text-sm mb-1">비밀번호</label>
+        <label class="text-sm block mb-1">비밀번호</label>
         <Password
           v-model="password"
           toggleMask
@@ -58,13 +58,18 @@ import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
-import api from '@/api' // ✅ axios 인스턴스 import
+import api from '@/api'
+import { getMyInfo } from '@/api/user'
+import { useUserStore } from '@/stores/user' // ✅ 수정된 import
 
+const router = useRouter()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const loginFailMessage = ref('')
-const router = useRouter()
+
+// ✅ Pinia 스토어 인스턴스
+const userStore = useUserStore()
 
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*\d).{8,20}$/
@@ -75,10 +80,7 @@ const isPasswordValid = computed(() => PASSWORD_REGEX.test(password.value))
 const handleLogin = async () => {
   loginFailMessage.value = ''
 
-  if (!isEmailValid.value || !isPasswordValid.value) {
-    console.log('❌ 입력 형식 오류')
-    return
-  }
+  if (!isEmailValid.value || !isPasswordValid.value) return
 
   try {
     const response = await api.post(
@@ -88,7 +90,7 @@ const handleLogin = async () => {
         password: password.value
       },
       {
-        validateStatus: () => true // 실패 응답도 처리
+        validateStatus: () => true
       }
     )
 
@@ -96,13 +98,16 @@ const handleLogin = async () => {
     if (response.status === 200 && authHeader) {
       const token = authHeader.replace('Bearer ', '')
       localStorage.setItem('accessToken', token)
-      router.push('/') // 메인 페이지로 이동
+
+      // ✅ 로그인 성공 후 사용자 정보 조회
+      const res = await getMyInfo()
+      userStore.setUser(res.data)
+
+      router.push('/')
     } else {
       loginFailMessage.value = '이메일 또는 비밀번호가 올바르지 않습니다.'
-      console.log('❌ 로그인 실패 상태:', response.status)
     }
   } catch (error) {
-    console.error('❌ 로그인 요청 오류:', error)
     loginFailMessage.value = '서버 오류가 발생했습니다.'
   }
 }
