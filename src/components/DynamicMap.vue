@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useLocationStore } from '@/stores/locationStore'
+import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
 import { storeToRefs } from 'pinia'
 import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
 import { setMockMarker } from '@/composables/useGlobalGeolocation'
-import { drawGeoPolygon } from '@/composables/useMapPolygons'
+import { drawGeoPolygon, fadeOutPolygon } from '@/composables/useMapPolygons'
 import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
 import MyLocationButton from '@/components/MyLocationButton.vue'
 import SearchButton from './SearchButton.vue'
@@ -18,19 +19,21 @@ import {
 } from '@/composables/useMapMarkers'
 
 const { lat, lng } = storeToRefs(useLocationStore())
+const enteredZoneStore = useEnteredZoneStore()
+const { isEntered, polygonData } = storeToRefs(enteredZoneStore)
 
 let map = null
 let myMarker = null
-let geoPolygon = null
+const geoPolygonRef = ref(null)
 const otherMarkers = ref([])
 const showAttractionPins = ref(true)
 const showSearchButton = ref(false)
-const { isInZone, polygonData, startChecking, stopChecking } = useGeoFenceChecker(5)
+const { startChecking, stopChecking } = useGeoFenceChecker()
 
 function toggleAttractionPins() {
   showAttractionPins.value = !showAttractionPins.value
   showSearchButton.value = false
-  otherMarkers.value.forEach(m => m.setMap(null))
+  otherMarkers.value.forEach((m) => m.setMap(null))
 
   if (showAttractionPins.value) {
     loadAttractionMarkers({
@@ -90,11 +93,12 @@ watch([lat, lng], ([newLat, newLng]) => {
   }
 })
 
-watch(polygonData, (newVal) => {
-  if (newVal && map) {
-    geoPolygon = drawGeoPolygon(map, newVal, geoPolygon)
-  } else if (geoPolygon) {
-    geoPolygon.setMap(null)
+watch([isEntered, polygonData], ([entered, data]) => {
+  if (entered && data && map) {
+    geoPolygonRef.value = drawGeoPolygon(map, data, geoPolygonRef.value)
+  } else if (!entered && geoPolygonRef.value) {
+    fadeOutPolygon(geoPolygonRef.value)
+    geoPolygonRef.value = null
   }
 })
 

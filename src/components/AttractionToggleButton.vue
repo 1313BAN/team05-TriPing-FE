@@ -19,12 +19,10 @@ function toggle() {
       @click="toggle"
       :class="[
         'cursor-pointer px-3 py-2 rounded-4xl shadow text-sm font-medium border transition duration-150 bg-white',
-        isActive
-          ? 'border-primary text-primary'
-          : 'border-gray-300 text-gray-800 hover:bg-gray-100'
+        isActive ? 'border-primary text-primary' : 'border-gray-300 text-gray-800 hover:bg-gray-100'
       ]"
     >
-      📍 관광지
+      📍 모든 관광지
     </button>
   </div>
 </template>

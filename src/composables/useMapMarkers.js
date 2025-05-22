@@ -4,7 +4,6 @@ import { createCustomMarkerElement, createMyLocationMarkerElement } from './mark
 export { createMyLocationMarkerElement }
 import { getMarkersInViewport } from '@/api/attraction'
 
-
 let selectedMarker = null
 let skipNextClickClear = false
 let dragInProgress = false
