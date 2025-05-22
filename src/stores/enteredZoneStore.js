@@ -7,17 +7,19 @@ export const useEnteredZoneStore = defineStore(
     const isEntered = ref(false)
     const attractionId = ref(null)
     const polygonData = ref(null)
+    const attractionTitle = ref(null)
 
     return {
       isEntered,
       attractionId,
-      polygonData
+      polygonData,
+      attractionTitle
     }
   },
   {
     persist: {
       storage: localStorage,
-      paths: ['isEntered', 'attractionId', 'polygonData']
+      paths: ['isEntered', 'attractionId', 'attractionTitle', 'polygonData']
     }
   }
 )

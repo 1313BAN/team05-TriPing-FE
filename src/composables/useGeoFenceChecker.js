@@ -8,7 +8,7 @@ import { point } from '@turf/helpers'
 
 export function useGeoFenceChecker() {
   const store = useEnteredZoneStore()
-  const { isEntered, attractionId, polygonData } = storeToRefs(store)
+  const { isEntered, attractionId, attractionTitle, polygonData } = storeToRefs(store)
 
   let stopWatching = null
 
@@ -29,6 +29,7 @@ export function useGeoFenceChecker() {
             isEntered.value = false
             attractionId.value = null
             polygonData.value = null
+            attractionTitle.value = null
           }
         } catch (e) {
           console.error('Turf.js polygon 검사 실패:', e)
@@ -40,11 +41,13 @@ export function useGeoFenceChecker() {
         const res = await checkIfEntered({ lat, lng })
         if (res.status === 200) {
           isEntered.value = true
-          attractionId.value = res.data.id
-          polygonData.value = JSON.parse(res.data.polygonJson) // ← GeoJSON으로 파싱해서 저장
+          attractionId.value = res.data.no
+          attractionTitle.value = res.data.title
+          polygonData.value = JSON.parse(res.data.polygonJson) // GeoJSON 파싱해서 저장
         } else if (res.status === 204) {
           isEntered.value = false
           attractionId.value = null
+          attractionTitle.value = null
           polygonData.value = null
         }
       } catch (e) {
