@@ -13,3 +13,8 @@ export const checkIfEntered = ({ lat, lng }) => {
     params: { lat, lng }
   })
 }
+
+// Attraction 상세 정보 조회
+export const getAttractionByNo = (no) => {
+  return api.get(`/attraction/${no}`)
+}

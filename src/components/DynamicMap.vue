@@ -113,7 +113,12 @@ onMounted(() => {
     initMap()
     startChecking(() => getCurrentPositionFromStore(lat, lng))
   }
+
+  if (isEntered.value && polygonData.value && map) {
+    geoPolygonRef.value = drawGeoPolygon(map, polygonData.value, geoPolygonRef.value)
+  }
 })
+
 
 onUnmounted(() => {
   stopChecking()
