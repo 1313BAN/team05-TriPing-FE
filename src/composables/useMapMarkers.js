@@ -2,6 +2,7 @@
 
 import { createCustomMarkerElement, createMyLocationMarkerElement } from './markerElements'
 export { createMyLocationMarkerElement }
+import { getMarkersInViewport } from '@/api/attraction'
 
 
 let selectedMarker = null
@@ -73,6 +74,46 @@ export function renderMarkersOnMap(data, map, myMarker) {
   }
 
   return markers
+}
+
+export function updateMyMarkerPosition(myMarker, lat, lng) {
+  if (myMarker && lat && lng) {
+    const pos = new naver.maps.LatLng(lat, lng)
+    myMarker.setPosition(pos)
+  }
+}
+
+export async function loadAttractionMarkers({ map, myMarker, setMarkersRef, showSearchButtonRef }) {
+  const bounds = map.getBounds()
+  const sw = bounds.getSW()
+  const ne = bounds.getNE()
+  const zoom = map.getZoom()
+
+  const lat1 = sw.y
+  const lat2 = ne.y
+  const lng1 = sw.x
+  const lng2 = ne.x
+
+  try {
+    const res = await getMarkersInViewport({ lat1, lat2, lng1, lng2, zoomLevel: zoom })
+
+    // 기존 마커 제거
+    setMarkersRef.value.forEach((m) => m.setMap(null))
+
+    // 새 마커 추가
+    const newMarkers = renderMarkersOnMap(res.data, map, myMarker)
+    setMarkersRef.value = newMarkers
+
+    // UI 상태 갱신
+    showSearchButtonRef.value = false
+
+    if (myMarker) {
+      myMarker.setMap(null)
+      myMarker.setMap(map)
+    }
+  } catch (err) {
+    console.error('마커 불러오기 실패', err)
+  }
 }
 
 function resetMarkerAppearance(marker) {

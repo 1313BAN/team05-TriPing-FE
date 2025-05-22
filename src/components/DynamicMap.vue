@@ -1,28 +1,31 @@
-//DynamicMap.vue
-
 <script setup>
-import { onMounted, watch, ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useLocationStore } from '@/stores/locationStore'
 import { storeToRefs } from 'pinia'
-import { getMarkersInViewport } from '@/api/attraction'
+import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
 import { setMockMarker } from '@/composables/useGlobalGeolocation'
+import { drawGeoPolygon } from '@/composables/useMapPolygons'
+import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
 import MyLocationButton from '@/components/MyLocationButton.vue'
 import SearchButton from './SearchButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
 import {
   renderMarkersOnMap,
-  createMyLocationMarkerElement
+  createMyLocationMarkerElement,
+  updateMyMarkerPosition,
+  loadAttractionMarkers
 } from '@/composables/useMapMarkers'
-
 
 const { lat, lng } = storeToRefs(useLocationStore())
 
 let map = null
 let myMarker = null
+let geoPolygon = null
 const otherMarkers = ref([])
 const showAttractionPins = ref(true)
 const showSearchButton = ref(false)
+const { isInZone, polygonData, startChecking, stopChecking } = useGeoFenceChecker(5)
 
 function toggleAttractionPins() {
   showAttractionPins.value = !showAttractionPins.value
@@ -30,7 +33,12 @@ function toggleAttractionPins() {
   otherMarkers.value.forEach(m => m.setMap(null))
 
   if (showAttractionPins.value) {
-    loadMarkers()
+    loadAttractionMarkers({
+      map,
+      myMarker,
+      setMarkersRef: otherMarkers,
+      showSearchButtonRef: showSearchButton
+    })
   }
 }
 
@@ -63,60 +71,51 @@ function initMap() {
     if (showAttractionPins.value) showSearchButton.value = true
   })
 
-  loadMarkers()
-}
-
-function updateMyMarker(newLat, newLng) {
-  if (myMarker && map) {
-    const pos = new naver.maps.LatLng(newLat, newLng)
-    myMarker.setPosition(pos)
+  if (showAttractionPins.value) {
+    loadAttractionMarkers({
+      map,
+      myMarker,
+      setMarkersRef: otherMarkers,
+      showSearchButtonRef: showSearchButton
+    })
   }
 }
 
 watch([lat, lng], ([newLat, newLng]) => {
   if (!map && newLat && newLng) {
     initMap()
+    startChecking(() => getCurrentPositionFromStore(lat, lng))
   } else {
-    updateMyMarker(newLat, newLng)
+    updateMyMarkerPosition(myMarker, newLat, newLng)
+  }
+})
+
+watch(polygonData, (newVal) => {
+  if (newVal && map) {
+    geoPolygon = drawGeoPolygon(map, newVal, geoPolygon)
+  } else if (geoPolygon) {
+    geoPolygon.setMap(null)
   }
 })
 
 onMounted(() => {
   if (window.naver && lat.value && lng.value) {
     initMap()
+    startChecking(() => getCurrentPositionFromStore(lat, lng))
   }
 })
 
-async function loadMarkers() {
-  if (!showAttractionPins.value) return
-
-  const bounds = map.getBounds()
-  const sw = bounds.getSW()
-  const ne = bounds.getNE()
-  const zoom = map.getZoom()
-
-  const lat1 = sw.y
-  const lat2 = ne.y
-  const lng1 = sw.x
-  const lng2 = ne.x
-
-  try {
-    const res = await getMarkersInViewport({ lat1, lat2, lng1, lng2, zoomLevel: zoom })
-    otherMarkers.value.forEach(m => m.setMap(null))
-    otherMarkers.value = renderMarkersOnMap(res.data, map, myMarker, showAttractionPins.value)
-    showSearchButton.value = false
-
-    if (myMarker) {
-      myMarker.setMap(null)
-      myMarker.setMap(map)
-    }
-  } catch (err) {
-    console.error('마커 불러오기 실패', err)
-  }
-}
+onUnmounted(() => {
+  stopChecking()
+})
 
 function handleSearchCurrentMap() {
-  loadMarkers()
+  loadAttractionMarkers({
+    map,
+    myMarker,
+    setMarkersRef: otherMarkers,
+    showSearchButtonRef: showSearchButton
+  })
 }
 </script>
 
@@ -125,7 +124,13 @@ function handleSearchCurrentMap() {
     <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl"></div>
     <MyLocationButton />
     <SearchButton />
-    <SearchByViewportButton :show="showAttractionPins && showSearchButton" @search="handleSearchCurrentMap" />
-    <AttractionToggleButton :modelValue="showAttractionPins" @update:modelValue="toggleAttractionPins" />
+    <SearchByViewportButton
+      :show="showAttractionPins && showSearchButton"
+      @search="handleSearchCurrentMap"
+    />
+    <AttractionToggleButton
+      :modelValue="showAttractionPins"
+      @update:modelValue="toggleAttractionPins"
+    />
   </div>
 </template>
