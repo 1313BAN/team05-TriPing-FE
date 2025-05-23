@@ -18,3 +18,8 @@ export const checkIfEntered = ({ lat, lng }) => {
 export const getAttractionByNo = (no) => {
   return api.get(`/attraction/${no}`)
 }
+
+// 상위 attraction no를 기반으로 subAttraction 정보와 폴리곤 리스트 조회
+export const getSubAttractions = (attractionNo) => {
+  return api.get(`/attraction/${attractionNo}/subs`)
+}

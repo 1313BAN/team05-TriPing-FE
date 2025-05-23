@@ -1,6 +1,6 @@
 // @/composables/useMapPolygons.js
 
-export function drawGeoPolygon(map, geoJson, prevPolygon) {
+export function drawGeoPolygon(map, geoJson, prevPolygon, type = 'parent') {
   if (!geoJson?.coordinates?.[0]) return prevPolygon
 
   const coords = geoJson.coordinates[0]
@@ -8,19 +8,25 @@ export function drawGeoPolygon(map, geoJson, prevPolygon) {
 
   if (prevPolygon) fadeOutPolygon(prevPolygon)
 
+  const fillColor = '#0064FF'
+  const strokeColor = '#0064FF'
+
+  const targetFillOpacity = type === 'sub' ? 0.4 : 0.15
+  const targetStrokeOpacity = 1
+
   const polygon = new naver.maps.Polygon({
     map,
     paths: path,
-    strokeColor: '#0064FF',
+    strokeColor,
     strokeOpacity: 0,
     strokeWeight: 3,
-    fillColor: '#0064FF',
+    fillColor,
     fillOpacity: 0
   })
 
   animatePolygonFadeIn(polygon, {
-    targetFillOpacity: 0.15,
-    targetStrokeOpacity: 1,
+    targetFillOpacity,
+    targetStrokeOpacity,
     duration: 300
   })
 

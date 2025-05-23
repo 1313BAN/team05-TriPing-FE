@@ -14,7 +14,6 @@ import SearchButton from './SearchButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
 import {
-  renderMarkersOnMap,
   createMyLocationMarkerElement,
   updateMyMarkerPosition,
   loadAttractionMarkers
@@ -22,11 +21,17 @@ import {
 
 const { lat, lng } = storeToRefs(useLocationStore())
 const enteredZoneStore = useEnteredZoneStore()
-const { isEntered, polygonData } = storeToRefs(enteredZoneStore)
+const { isEntered, polygonData, enteredSubAttractionId, parsedSubAttractions } =
+  storeToRefs(enteredZoneStore)
+
+const enteredSub = computed(() =>
+  parsedSubAttractions.value.find((sub) => sub.no === enteredSubAttractionId.value)
+)
 
 let map = null
 let myMarker = null
 const geoPolygonRef = ref(null)
+const subPolygonRef = ref(null)
 const otherMarkers = ref([])
 const showAttractionPins = ref(false)
 const showSearchButton = ref(false)
@@ -101,10 +106,19 @@ watch([lat, lng], ([newLat, newLng]) => {
 
 watch([isEntered, polygonData], ([entered, data]) => {
   if (entered && data && map) {
-    geoPolygonRef.value = drawGeoPolygon(map, data, geoPolygonRef.value)
+    geoPolygonRef.value = drawGeoPolygon(map, data, geoPolygonRef.value, 'parent')
   } else if (!entered && geoPolygonRef.value) {
     fadeOutPolygon(geoPolygonRef.value)
     geoPolygonRef.value = null
+  }
+})
+
+watch(enteredSub, (sub) => {
+  if (sub && map) {
+    subPolygonRef.value = drawGeoPolygon(map, sub.subPolygonJson, subPolygonRef.value, 'sub')
+  } else if (!sub && subPolygonRef.value) {
+    fadeOutPolygon(subPolygonRef.value)
+    subPolygonRef.value = null
   }
 })
 
@@ -115,10 +129,18 @@ onMounted(() => {
   }
 
   if (isEntered.value && polygonData.value && map) {
-    geoPolygonRef.value = drawGeoPolygon(map, polygonData.value, geoPolygonRef.value)
+    geoPolygonRef.value = drawGeoPolygon(map, polygonData.value, geoPolygonRef.value, 'parent')
+  }
+
+  if (enteredSub.value && map) {
+    subPolygonRef.value = drawGeoPolygon(
+      map,
+      enteredSub.value.subPolygonJson,
+      subPolygonRef.value,
+      'sub'
+    )
   }
 })
-
 
 onUnmounted(() => {
   stopChecking()

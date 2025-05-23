@@ -3,7 +3,7 @@
 
 @theme {
   --color-primary: #e85f5c;
-  --font-sans: 'Pretendard', 'sans-serif'; /* ✅ 핵심 포인트 */
+  --font-sans: 'Pretendard', 'sans-serif';
 }
 
 html {
