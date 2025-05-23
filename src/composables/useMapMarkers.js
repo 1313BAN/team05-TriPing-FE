@@ -1,66 +1,107 @@
 // useMapMarkers.js
-
-export { createMyLocationMarkerElement }
 import { getMarkersInViewport } from '@/api/attraction'
 
-let selectedMarker = null
+
+let selectedMarkerSet = null
 let skipNextClickClear = false
 let dragInProgress = false
 let mapClickListenerAttached = false
 
-export function renderMarkersOnMap(data, map, myMarker) {
+const SELECTED_Z_INDEX = 9999
+
+export function renderMarkersOnMap(data, map, myMarker, router) {
   const markers = []
 
-  data.forEach((item, index) => {
-    const container = createCustomMarkerElement(item.title)
+  // 북쪽(위쪽)에 있는 마커가 더 위에 보이도록 위도 내림차순 정렬
+  const sortedData = [...data].sort((a, b) => b.latitude - a.latitude)
+
+  sortedData.forEach((item, index) => {
+    const content = document.createElement('div')
+    content.innerHTML = `
+      <div style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(-8px);
+        position: relative;
+      ">
+        <img src="/assets/icons/location.png"
+             class="custom-marker"
+             style="
+               width: 28px;
+               height: 28px;
+               transition: transform 0.2s ease;
+             " />
+        <span style="
+          margin-top: 2px;
+          background: white;
+          padding: 2px 6px;
+          font-size: 12px;
+          font-weight: bold;
+          border-radius: 4px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+          white-space: nowrap;
+          transition: transform 0.2s ease;
+        ">${item.title}</span>
+        <button class="detail-popup" style="
+          display: none;
+          position: absolute;
+          top: 100%;
+          margin-top: 8px;
+          width: 72px;
+          transform: translateX(-50%);
+          left: 50%;
+          background-color: #e85f5c;
+          color: white;
+          border: none;
+          border-radius: 30px;
+          padding: 4px 8px;
+          font-size: 11px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+          z-index: 10000;
+          cursor: pointer;
+        ">관광지 정보</button>
+      </div>
+    `
 
     const marker = new naver.maps.Marker({
       position: new naver.maps.LatLng(item.latitude, item.longitude),
       map,
       icon: {
-        content: container,
-        size: new naver.maps.Size(30, 44),
-        anchor: new naver.maps.Point(15, 44),
-        clickable: true
+        content,
+        anchor: new naver.maps.Point(14, 28),
+        size: new naver.maps.Size(28, 28)
       },
-      title: item.title,
-      zIndex: 100 + index,
-      hideCollidedMarkers: true,
-      hideCollidedCaptions: true
+      zIndex: 1000 - index,
+      clickable: true
     })
 
-    marker.originalZIndex = marker.getZIndex()
-    marker.domElement = container
+    marker._originalZIndex = 1000 - index
+    marker._customContent = content.firstElementChild
+
+    const detailButton = marker._customContent.querySelector('.detail-popup')
+    detailButton.addEventListener('click', (event) => {
+      event.stopPropagation()
+      router.push(`/attraction/${item.no}`)
+    })
+    
 
     naver.maps.Event.addListener(marker, 'click', (e) => {
       e.domEvent.stopPropagation()
       skipNextClickClear = true
 
-      if (selectedMarker && selectedMarker !== marker) {
-        resetMarkerAppearance(selectedMarker)
-      }
-
-      const isSelected = selectedMarker === marker
-
-      if (isSelected) {
-        resetMarkerAppearance(marker)
-        selectedMarker = null
+      const isSame = selectedMarkerSet?.marker === marker
+      if (selectedMarkerSet && !isSame) resetAppearance(selectedMarkerSet)
+      if (isSame) {
+        resetAppearance(selectedMarkerSet)
+        selectedMarkerSet = null
       } else {
-        marker.setZIndex(99999)
-        marker.setIcon({
-          ...marker.getIcon(),
-          content: createCustomMarkerElement(
-            marker.getTitle(),
-            '/assets/icons/location.png',
-            32,
-            true
-          )
-        })
-        selectedMarker = marker
+        enlargeAppearance({ marker })
+        selectedMarkerSet = { marker }
       }
     })
 
-    markers.push(marker)
+    markers.push({ marker })
   })
 
   attachMapClickListener()
@@ -81,7 +122,7 @@ export function updateMyMarkerPosition(myMarker, lat, lng) {
   }
 }
 
-export async function loadAttractionMarkers({ map, myMarker, setMarkersRef, showSearchButtonRef }) {
+export async function loadAttractionMarkers({ map, myMarker, setMarkersRef, showSearchButtonRef, router }) {
   const bounds = map.getBounds()
   const sw = bounds.getSW()
   const ne = bounds.getNE()
@@ -95,31 +136,16 @@ export async function loadAttractionMarkers({ map, myMarker, setMarkersRef, show
   try {
     const res = await getMarkersInViewport({ lat1, lat2, lng1, lng2, zoomLevel: zoom })
 
-    // 기존 마커 제거
-    setMarkersRef.value.forEach((m) => m.setMap(null))
+    setMarkersRef.value.forEach(({ marker }) => {
+      marker.setMap(null)
+    })
 
-    // 새 마커 추가
-    const newMarkers = renderMarkersOnMap(res.data, map, myMarker)
+    const newMarkers = renderMarkersOnMap(res.data, map, myMarker, router)
     setMarkersRef.value = newMarkers
-
-    // UI 상태 갱신
     showSearchButtonRef.value = false
-
-    if (myMarker) {
-      myMarker.setMap(null)
-      myMarker.setMap(map)
-    }
   } catch (err) {
     console.error('마커 불러오기 실패', err)
   }
-}
-
-function resetMarkerAppearance(marker) {
-  marker.setZIndex(marker.originalZIndex)
-  marker.setIcon({
-    ...marker.getIcon(),
-    content: createCustomMarkerElement(marker.getTitle(), '/assets/icons/location.png', 28, false)
-  })
 }
 
 function attachMapClickListener() {
@@ -140,10 +166,9 @@ function attachMapClickListener() {
   mapContainer.addEventListener('mouseup', () => {
     setTimeout(() => {
       if (skipNextClickClear || dragInProgress) return
-
-      if (selectedMarker) {
-        resetMarkerAppearance(selectedMarker)
-        selectedMarker = null
+      if (selectedMarkerSet) {
+        resetAppearance(selectedMarkerSet)
+        selectedMarkerSet = null
       }
     }, 0)
   })
@@ -151,40 +176,30 @@ function attachMapClickListener() {
   mapClickListenerAttached = true
 }
 
-function createMyLocationMarkerElement() {
-  const container = document.createElement('div')
-  container.className = 'relative pointer-events-none'
-
-  const img = document.createElement('img')
-  img.src = '/assets/icons/gps.png'
-  img.className = 'w-8 h-8'
-
-  container.appendChild(img)
-  return container
+function enlargeAppearance(markerObj) {
+  const { marker } = markerObj
+  const container = marker._customContent
+  if (!container) return
+  const img = container.querySelector('img')
+  const label = container.querySelector('span')
+  const detailPopup = container.querySelector('.detail-popup')
+  if (img) img.style.transform = 'scale(1.1)'
+  if (label) label.style.transform = 'scale(1.1)'
+  if (detailPopup) detailPopup.style.display = 'block'
+  marker.setZIndex(SELECTED_Z_INDEX)
 }
 
-function createCustomMarkerElement(
-  title,
-  iconUrl = '/assets/icons/location.png',
-  iconSize = 26,
-  isSelected = false
-) {
-  const container = document.createElement('div')
-  container.className = `flex flex-col items-center`
-
-  const img = document.createElement('img')
-  img.src = iconUrl
-  img.style.width = isSelected ? `${iconSize * 1.1}px` : `${iconSize}px`
-  img.style.height = isSelected ? `${iconSize * 1.1}px` : `${iconSize}px`
-  img.className = `object-contain pointer-events-none`
-
-  const label = document.createElement('span')
-  label.textContent = title
-  label.className = `mt-1 bg-white shadow-sm rounded px-1 py-0.5 whitespace-nowrap font-bold pointer-events-none`
-  label.style.fontSize = isSelected ? '14px' : '12px'
-
-  container.appendChild(img)
-  container.appendChild(label)
-
-  return container
+function resetAppearance(markerObj) {
+  const { marker } = markerObj
+  const container = marker._customContent
+  if (!container) return
+  const img = container.querySelector('img')
+  const label = container.querySelector('span')
+  const detailPopup = container.querySelector('.detail-popup')
+  if (img) img.style.transform = 'scale(1)'
+  if (label) label.style.transform = 'scale(1)'
+  if (detailPopup) detailPopup.style.display = 'none'
+  if (marker._originalZIndex !== undefined) {
+    marker.setZIndex(marker._originalZIndex)
+  }
 }

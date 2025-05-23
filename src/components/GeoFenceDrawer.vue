@@ -12,28 +12,20 @@
       class="absolute bottom-0 left-0 w-full z-[9999] bg-white rounded-t-2xl h-[300px] overflow-hidden"
     >
       <!-- 슬라이드 컨테이너 -->
-      <div class="relative w-full h-full">
-        <!-- ➡️ 오른쪽 이동 버튼 (메인 관광지 화면에서만) -->
-        <button
-          v-if="!isSubActive"
-          class="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full hover:cursor-pointer"
-        >
-          <i class="pi pi-angle-right text-3xl text-gray-700"></i>
-        </button>
-
-        <!-- ⬅️ 왼쪽 이동 버튼 (서브 관광지 화면에서만) -->
-        <button
-          v-if="isSubActive"
-          class="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full hover:cursor-pointer"
-        >
-          <i class="pi pi-angle-left text-3xl text-gray-700"></i>
-        </button>
-
+      <div class="relative w-full h-full" :class="manualSlideClass">
         <!-- 메인 관광지 -->
         <div
           class="absolute w-full h-full transition-transform duration-300"
-          :class="{ 'translate-x-0': !isSubActive, '-translate-x-full': isSubActive }"
+          :class="{ 'translate-x-0': !currentSlideState, '-translate-x-full': currentSlideState }"
         >
+        <!-- ➡️ 오른쪽 이동 버튼 (메인 관광지 화면에서 서브 관광지가 있을 때만) -->
+        <button
+          v-if="hasSubAttraction && !currentSlideState"
+          class="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full hover:cursor-pointer"
+          @click="slideToSub"
+        >
+          <i class="pi pi-angle-right text-3xl text-gray-700"></i>
+        </button>
           <div class="flex flex-col h-full items-center">
             <div class="flex-1 flex flex-col items-center justify-center w-full">
               <h2 class="text-2xl font-bold text-center">{{ attractionTitle }} 안에 있어요</h2>
@@ -61,13 +53,22 @@
         <!-- 서브 관광지 -->
         <div
           class="absolute w-full h-full transition-transform duration-300"
-          :class="{ 'translate-x-full': !isSubActive, 'translate-x-0': isSubActive }"
+          :class="{ 'translate-x-full': !currentSlideState, 'translate-x-0': currentSlideState }"
         >
+
+        <!-- ⬅️ 왼쪽 이동 버튼 (서브 관광지 화면에서만) -->
+        <button
+          v-if="currentSlideState"
+          class="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full hover:cursor-pointer"
+          @click="slideToMain"
+        >
+          <i class="pi pi-angle-left text-3xl text-gray-700"></i>
+        </button>
           <div class="flex flex-col h-full items-center">
             <div
               class="flex-1 flex flex-col items-center justify-center w-full transition-opacity duration-0"
               :class="[
-                isSubActive
+                currentSlideState
                   ? 'opacity-100 pointer-events-auto'
                   : 'opacity-0 pointer-events-none invisible'
               ]"
@@ -98,17 +99,43 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
 import { useRouter } from 'vue-router'
+
+const manualSlideClass = ref('')
+
+// 수동 슬라이드 상태 관리
+const manualSlideState = ref(null) // null: 자동, true: 수동으로 서브 활성화, false: 수동으로 메인 활성화
 
 const { isEntered, attractionTitle, attractionId, enteredSubAttractionId, subAttractions } =
   storeToRefs(useEnteredZoneStore())
 const router = useRouter()
 
 const visible = isEntered
+
+// 자동 슬라이드 상태 (기존 로직)
 const isSubActive = computed(() => enteredSubAttractionId.value !== null)
+
+// 서브 관광지가 있는지 확인
+const hasSubAttraction = computed(() => enteredSubAttractionId.value !== null)
+
+// 현재 실제 슬라이드 상태 (수동 우선, 없으면 자동)
+const currentSlideState = computed(() => {
+  if (manualSlideState.value !== null) {
+    return manualSlideState.value
+  }
+  return isSubActive.value
+})
+
+// enteredSubAttractionId가 변경되면 수동 상태 초기화
+watch(enteredSubAttractionId, (newVal, oldVal) => {
+  // 새로운 서브 관광지에 들어갔을 때만 수동 상태 초기화
+  if (newVal !== oldVal) {
+    manualSlideState.value = null
+  }
+})
 
 const subAttractionTitle = computed(() => {
   const sub = subAttractions.value.find((s) => s.no === enteredSubAttractionId.value)
@@ -123,6 +150,19 @@ function onInfoClick() {
   if (!attractionId.value) return
   router.push(`/attraction/${attractionId.value}`)
 }
+
+function slideToMain() {
+  manualSlideState.value = false
+  manualSlideClass.value = 'manual-left'
+  setTimeout(() => (manualSlideClass.value = ''), 300)
+}
+
+function slideToSub() {
+  manualSlideState.value = true
+  manualSlideClass.value = 'manual-right'
+  setTimeout(() => (manualSlideClass.value = ''), 300)
+}
+
 </script>
 
 <style scoped>
@@ -153,4 +193,21 @@ function onInfoClick() {
 .slide-leave-active {
   transition: transform 0.3s ease-in-out;
 }
+
+.manual-left > div:first-child {
+  transform: translateX(0%);
+}
+.manual-left > div:last-child {
+  transform: translateX(100%);
+}
+.manual-right > div:first-child {
+  transform: translateX(-100%);
+}
+.manual-right > div:last-child {
+  transform: translateX(0%);
+}
+.relative > div {
+  transition: transform 0.3s ease-in-out;
+}
+
 </style>

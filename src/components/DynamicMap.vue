@@ -14,16 +14,17 @@ import SearchButton from './SearchButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
 import {
-  createMyLocationMarkerElement,
   updateMyMarkerPosition,
   loadAttractionMarkers
 } from '@/composables/useMapMarkers'
+import { useRouter } from 'vue-router' 
+
 
 const { lat, lng } = storeToRefs(useLocationStore())
 const enteredZoneStore = useEnteredZoneStore()
 const { isEntered, polygonData, enteredSubAttractionId, parsedSubAttractions } =
   storeToRefs(enteredZoneStore)
-
+const router = useRouter()
 const enteredSub = computed(() =>
   parsedSubAttractions.value.find((sub) => sub.no === enteredSubAttractionId.value)
 )
@@ -44,14 +45,17 @@ const buttonOffset = computed(() => (drawerVisible.value ? 310 : 24))
 function toggleAttractionPins() {
   showAttractionPins.value = !showAttractionPins.value
   showSearchButton.value = false
-  otherMarkers.value.forEach((m) => m.setMap(null))
+  otherMarkers.value.forEach(({ marker }) => {
+  marker.setMap(null)
+})
 
   if (showAttractionPins.value) {
     loadAttractionMarkers({
       map,
       myMarker,
       setMarkersRef: otherMarkers,
-      showSearchButtonRef: showSearchButton
+      showSearchButtonRef: showSearchButton,
+      router
     })
   }
 }
@@ -65,16 +69,18 @@ function initMap() {
   window.map = map
 
   myMarker = new naver.maps.Marker({
-    position: new naver.maps.LatLng(lat.value, lng.value),
-    map: map,
-    icon: {
-      content: createMyLocationMarkerElement(),
-      size: new naver.maps.Size(32, 32),
-      anchor: new naver.maps.Point(16, 32)
-    },
-    zIndex: 999999,
-    title: '내 위치'
-  })
+  position: new naver.maps.LatLng(lat.value, lng.value),
+  map: map,
+  icon: {
+    url: '/assets/icons/gps.png',
+    size: new naver.maps.Size(32, 32),
+    anchor: new naver.maps.Point(16, 32),
+    scaledSize: new naver.maps.Size(32, 32) // 고해상도 디스플레이 대응
+  },
+  zIndex: 999999,
+  title: '내 위치'
+})
+
 
   setMockMarker(myMarker)
 
@@ -90,7 +96,8 @@ function initMap() {
       map,
       myMarker,
       setMarkersRef: otherMarkers,
-      showSearchButtonRef: showSearchButton
+      showSearchButtonRef: showSearchButton,
+      router
     })
   }
 }
