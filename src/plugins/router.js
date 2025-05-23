@@ -11,13 +11,9 @@ import AttractionDetail from '../pages/attraction/[id].vue'
 
 const routes = [
   { path: '/', component: Home },
-  // { path: '/myreview', component: MyReview },
-  // { path: '/mypage', component: MyPage },
-  // { path: '/mypage/change-password', component: ChangePasswordView },
   { path: '/setting', component: Setting },
   { path: '/login', component: Login },
   { path: '/signup', component: SignUp },
-  // { path: '/mypage/edit', component: EditProfileView },
   { path: '/attraction/:id', component: AttractionDetail, props: true },
 
   // 로그인 필요
