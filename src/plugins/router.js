@@ -9,24 +9,22 @@ import ChangePasswordView from '../pages/mypage/ChangePasswordView.vue'
 import EditProfileView from '../pages/mypage/EditProfileView.vue'
 import AttractionDetail from '../pages/attraction/[id].vue'
 
-
 const routes = [
   { path: '/', component: Home },
-  { path: '/myreview', component: MyReview },
-  { path: '/mypage', component: MyPage },
-  { path: '/mypage/change-password', component: ChangePasswordView },
+  // { path: '/myreview', component: MyReview },
+  // { path: '/mypage', component: MyPage },
+  // { path: '/mypage/change-password', component: ChangePasswordView },
   { path: '/setting', component: Setting },
   { path: '/login', component: Login },
   { path: '/signup', component: SignUp },
-  { path: '/mypage/edit', component: EditProfileView },
-  { path: '/attraction/:id', component: AttractionDetail, props: true }
+  // { path: '/mypage/edit', component: EditProfileView },
+  { path: '/attraction/:id', component: AttractionDetail, props: true },
 
   // 로그인 필요
   { path: '/myreview', component: MyReview, meta: { requiresAuth: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/mypage/edit', component: EditProfileView, meta: { requiresAuth: true } },
   { path: '/mypage/change-password', component: ChangePasswordView, meta: { requiresAuth: true } },
-
 
   { path: '/setting', component: Setting }
 ]
@@ -35,7 +33,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
-
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('accessToken')
@@ -47,5 +44,6 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+// router.beforeEach((to, from, next) => {
 
 export default router
