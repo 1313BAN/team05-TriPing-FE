@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="fixed border-gray-200 z-50 h-16 w-full bottom-0 border-t md:h-full md:top-0 md:right-0 md:bottom-auto md:border-none md:w-1/6"
+    class="fixed border-gray-200 z-50 h-16 w-full bottom-0 border-t md:h-full md:top-0 md:right-0 md:bottom-auto md:border-none md:w-1/6 bg-white"
   >
     <ul
       class="flex w-full h-full items-center justify-around md:flex-col md:justify-center md:space-y-6"
@@ -31,9 +31,9 @@
 import { RouterLink } from 'vue-router'
 
 const navItems = [
-  { path: '/', icon: 'pi-home' },
-  { path: '/myreview', icon: 'pi-comments' },
+  { path: '/', icon: 'pi-map' },
+  { path: '/myreview', icon: 'pi-calendar-clock' },
   { path: '/mypage', icon: 'pi-user' },
-  { path: '/setting', icon: 'pi-cog' }
+  { path: '/setting', icon: 'pi-ellipsis-h' }
 ]
 </script>
