@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useLocationStore } from '@/stores/locationStore'
+import GeoFenceDrawer from '@/components/GeoFenceDrawer.vue'
+import { computed } from 'vue'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
 import { storeToRefs } from 'pinia'
 import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
@@ -26,9 +28,13 @@ let map = null
 let myMarker = null
 const geoPolygonRef = ref(null)
 const otherMarkers = ref([])
-const showAttractionPins = ref(true)
+const showAttractionPins = ref(false)
 const showSearchButton = ref(false)
 const { startChecking, stopChecking } = useGeoFenceChecker()
+
+// 버튼 위치 조정
+const drawerVisible = computed(() => useEnteredZoneStore().isEntered)
+const buttonOffset = computed(() => (drawerVisible.value ? 310 : 24))
 
 function toggleAttractionPins() {
   showAttractionPins.value = !showAttractionPins.value
@@ -107,7 +113,12 @@ onMounted(() => {
     initMap()
     startChecking(() => getCurrentPositionFromStore(lat, lng))
   }
+
+  if (isEntered.value && polygonData.value && map) {
+    geoPolygonRef.value = drawGeoPolygon(map, polygonData.value, geoPolygonRef.value)
+  }
 })
+
 
 onUnmounted(() => {
   stopChecking()
@@ -124,17 +135,19 @@ function handleSearchCurrentMap() {
 </script>
 
 <template>
-  <div class="w-full h-full relative">
-    <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl"></div>
-    <MyLocationButton />
-    <SearchButton />
-    <SearchByViewportButton
-      :show="showAttractionPins && showSearchButton"
-      @search="handleSearchCurrentMap"
-    />
-    <AttractionToggleButton
-      :modelValue="showAttractionPins"
-      @update:modelValue="toggleAttractionPins"
-    />
+  <div class="w-full h-full relative md:border-1 md:border-gray-200 md:rounded-3xl">
+    <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl">
+      <MyLocationButton :offsetBottom="buttonOffset" />
+      <SearchButton :offsetBottom="buttonOffset" />
+      <SearchByViewportButton
+        :show="showAttractionPins && showSearchButton"
+        @search="handleSearchCurrentMap"
+      />
+      <AttractionToggleButton
+        :modelValue="showAttractionPins"
+        @update:modelValue="toggleAttractionPins"
+      />
+      <GeoFenceDrawer />
+    </div>
   </div>
 </template>

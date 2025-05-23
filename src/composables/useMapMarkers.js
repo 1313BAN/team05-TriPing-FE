@@ -1,6 +1,5 @@
 // useMapMarkers.js
 
-import { createCustomMarkerElement, createMyLocationMarkerElement } from './markerElements'
 export { createMyLocationMarkerElement }
 import { getMarkersInViewport } from '@/api/attraction'
 
@@ -119,7 +118,7 @@ function resetMarkerAppearance(marker) {
   marker.setZIndex(marker.originalZIndex)
   marker.setIcon({
     ...marker.getIcon(),
-    content: createCustomMarkerElement(marker.getTitle(), '/assets/icons/location.png', 32, false)
+    content: createCustomMarkerElement(marker.getTitle(), '/assets/icons/location.png', 28, false)
   })
 }
 
@@ -150,4 +149,42 @@ function attachMapClickListener() {
   })
 
   mapClickListenerAttached = true
+}
+
+function createMyLocationMarkerElement() {
+  const container = document.createElement('div')
+  container.className = 'relative pointer-events-none'
+
+  const img = document.createElement('img')
+  img.src = '/assets/icons/gps.png'
+  img.className = 'w-8 h-8'
+
+  container.appendChild(img)
+  return container
+}
+
+function createCustomMarkerElement(
+  title,
+  iconUrl = '/assets/icons/location.png',
+  iconSize = 26,
+  isSelected = false
+) {
+  const container = document.createElement('div')
+  container.className = `flex flex-col items-center`
+
+  const img = document.createElement('img')
+  img.src = iconUrl
+  img.style.width = isSelected ? `${iconSize * 1.1}px` : `${iconSize}px`
+  img.style.height = isSelected ? `${iconSize * 1.1}px` : `${iconSize}px`
+  img.className = `object-contain pointer-events-none`
+
+  const label = document.createElement('span')
+  label.textContent = title
+  label.className = `mt-1 bg-white shadow-sm rounded px-1 py-0.5 whitespace-nowrap font-bold pointer-events-none`
+  label.style.fontSize = isSelected ? '14px' : '12px'
+
+  container.appendChild(img)
+  container.appendChild(label)
+
+  return container
 }
