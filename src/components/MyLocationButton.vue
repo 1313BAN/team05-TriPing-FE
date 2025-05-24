@@ -29,6 +29,6 @@ function centerToCurrentLocation() {
     :style="{ bottom: `${offsetBottom}px` }"
     @click="centerToCurrentLocation"
   >
-    <img :src="gpsIcon" alt="내 위치" class="w-8" />
+    <img :src="gpsIcon" alt="내 위치" class="w-8 p-1" />
   </button>
 </template>

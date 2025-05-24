@@ -27,10 +27,10 @@ export function useMapController({ router }) {
       position: new naver.maps.LatLng(lat.value, lng.value),
       map: map.value,
       icon: {
-        url: '/assets/icons/gps.png',
-        size: new naver.maps.Size(32, 32),
-        anchor: new naver.maps.Point(16, 32),
-        scaledSize: new naver.maps.Size(32, 32)
+        url: '/assets/icons/my-location.png',
+        size: new naver.maps.Size(36, 36),
+        anchor: new naver.maps.Point(18, 36),
+        scaledSize: new naver.maps.Size(36, 36)
       },
       zIndex: 999999,
       title: '내 위치'
