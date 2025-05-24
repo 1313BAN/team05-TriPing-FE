@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4 space-y-6">
+  <div class="md:p-4 space-y-6">
     <Card class="border-0 shadow-none">
       <template #title>
         <div class="flex justify-between items-center px-2 mb-4">
@@ -8,7 +8,7 @@
               class="pi pi-angle-left text-2xl text-gray-500 cursor-pointer"
               @click="$router.back()"
             ></i>
-            <div class="text-2xl font-bold text-gray-900 leading-none">{{ attraction.title }}</div>
+            <div class="md:text-2xl text-xl font-bold text-gray-900 leading-none">{{ attraction.title }}</div>
           </div>
           <div v-if="attraction.homepage">
             <a
@@ -37,17 +37,17 @@
 
         <!-- 다녀간 인원 -->
         <div
-          class="bg-gray-50 border border-gray-200 rounded-md p-3 text-center font-semibold text-primary text-lg"
+          class="bg-gray-50 border border-gray-200 rounded-md p-3 text-center font-semibold text-primary md:text-lg text-base"
         >
           지금까지 총 {{ attraction.visitCount?.toLocaleString() ?? '0' }}명이 방문했어요!
         </div>
 
         <Card class="mt-4 border rounded-md border-gray-200 mb-4">
           <template #content>
-            <div class="space-y-2 text-base">
+            <div class="space-y-2 md:text-base text-sm">
               <div class="flex gap-4">
                 <span class="font-semibold text-gray-700 min-w-[5rem]">주소</span>
-                <span>{{ formatField(attraction.addr1) }}</span>
+                <span class="text-sm">{{ formatField(attraction.addr1) }}</span>
               </div>
               <div class="flex gap-4">
                 <span class="font-semibold text-gray-700 min-w-[5rem]">전화번호</span>
@@ -57,7 +57,7 @@
           </template>
         </Card>
 
-        <Panel header="개요">
+        <Panel header="개요" class="md:text-base text-sm">
           <p class="text-gray-700 whitespace-pre-line leading-relaxed px-2">
             {{ attraction.overview || '-' }}
           </p>

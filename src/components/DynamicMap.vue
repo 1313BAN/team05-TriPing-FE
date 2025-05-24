@@ -8,7 +8,6 @@ import { drawGeoPolygon, fadeOutPolygon } from '@/composables/useMapPolygons'
 import { useMapController } from '@/composables/map/useMapController'
 
 import MyLocationButton from '@/components/MyLocationButton.vue'
-import SearchButton from './SearchButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
 import GeoFenceDrawer from '@/components/GeoFenceDrawer.vue'
@@ -85,7 +84,6 @@ onMounted(() => {
   <div class="w-full h-full relative md:rounded-3xl">
     <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl">
       <MyLocationButton :offsetBottom="buttonOffset" />
-      <SearchButton :offsetBottom="buttonOffset" />
       <SearchByViewportButton
         :show="showAttractionPins && showSearchButton"
         @search="handleSearchCurrentMap"
