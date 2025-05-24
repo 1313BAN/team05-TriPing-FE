@@ -6,12 +6,12 @@ import { useLocationStore } from '@/stores/locationStore'
 import { storeToRefs } from 'pinia'
 import { startGlobalGeolocation, stopGlobalGeolocation } from '@/composables/useGlobalGeolocation'
 import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
-import { getCurrentPositionFromStore } from '@/composables/useLocationUtils' // 현재 위치 getter
+import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
+import { useVisitTracker } from '@/composables/useVisitTracker'
 
-// 💡 dev 모드 대응
 const devStore = useDevStore()
 
-// ✅ 위치 추적 (이미 잘 되어 있음)
+// 위치 추적
 watch(
   () => devStore.devMode,
   (newVal) => {
@@ -21,12 +21,12 @@ watch(
   { immediate: true }
 )
 
-// ✅ 지오펜싱 감지 전역 실행 (추가된 부분)
 const { lat, lng } = storeToRefs(useLocationStore())
 const { startChecking } = useGeoFenceChecker()
 
 onMounted(() => {
-  startChecking(() => getCurrentPositionFromStore(lat, lng))
+  startChecking(() => getCurrentPositionFromStore(lat, lng)) // 지오펜싱 감지 전역 실행
+  useVisitTracker() // 방문 기록 추적
 })
 </script>
 
@@ -38,7 +38,7 @@ onMounted(() => {
 
     <MenuBar />
 
-    <div class="max-w-4xl md:w-2/3 md:h-4/5 w-full h-[calc(100vh-64px)] mx-auto border-gray-200">
+    <div class="max-w-4xl md:w-2/3 md:h-4/5 w-full h-[calc(100vh-64px)] mx-auto">
       <router-view />
     </div>
   </div>

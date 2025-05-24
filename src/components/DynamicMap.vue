@@ -83,7 +83,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full relative md:border-1 md:border-gray-200 md:rounded-3xl">
+  <div class="w-full h-full relative md:rounded-3xl">
     <div id="map" class="w-full h-full md:border-1 md:border-gray-200 md:rounded-3xl">
       <MyLocationButton :offsetBottom="buttonOffset" />
       <SearchButton :offsetBottom="buttonOffset" />
