@@ -1,11 +1,17 @@
 <script setup>
 import MenuBar from './components/MenuBar.vue'
-import { watch } from 'vue'
+import { watch, onMounted } from 'vue'
 import { useDevStore } from '@/stores/devStore'
+import { useLocationStore } from '@/stores/locationStore'
+import { storeToRefs } from 'pinia'
 import { startGlobalGeolocation, stopGlobalGeolocation } from '@/composables/useGlobalGeolocation'
+import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
+import { getCurrentPositionFromStore } from '@/composables/useLocationUtils' // 현재 위치 getter
 
+// 💡 dev 모드 대응
 const devStore = useDevStore()
 
+// ✅ 위치 추적 (이미 잘 되어 있음)
 watch(
   () => devStore.devMode,
   (newVal) => {
@@ -14,6 +20,14 @@ watch(
   },
   { immediate: true }
 )
+
+// ✅ 지오펜싱 감지 전역 실행 (추가된 부분)
+const { lat, lng } = storeToRefs(useLocationStore())
+const { startChecking } = useGeoFenceChecker()
+
+onMounted(() => {
+  startChecking(() => getCurrentPositionFromStore(lat, lng))
+})
 </script>
 
 <template>

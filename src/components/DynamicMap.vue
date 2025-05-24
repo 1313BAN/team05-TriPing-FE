@@ -1,12 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useLocationStore } from '@/stores/locationStore'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
-import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
 import { drawGeoPolygon, fadeOutPolygon } from '@/composables/useMapPolygons'
-import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
 import { useMapController } from '@/composables/map/useMapController'
 
 import MyLocationButton from '@/components/MyLocationButton.vue'
@@ -36,8 +34,6 @@ const {
   updateMarker
 } = useMapController({ router })
 
-const { startChecking, stopChecking } = useGeoFenceChecker()
-
 const geoPolygonRef = ref(null)
 const subPolygonRef = ref(null)
 
@@ -47,7 +43,6 @@ const buttonOffset = computed(() => (drawerVisible.value ? 310 : 24))
 watch([lat, lng], ([newLat, newLng]) => {
   if (!map.value && newLat && newLng) {
     initMap()
-    startChecking(() => getCurrentPositionFromStore(lat, lng))
   } else {
     updateMarker(newLat, newLng)
   }
@@ -74,12 +69,16 @@ watch(enteredSub, (sub) => {
 onMounted(() => {
   if (window.naver && lat.value && lng.value) {
     initMap()
-    startChecking(() => getCurrentPositionFromStore(lat, lng))
   }
-})
+  if (map.value) {
+    if (isEntered.value && polygonData.value) {
+      geoPolygonRef.value = drawGeoPolygon(map.value, polygonData.value, geoPolygonRef.value, 'parent')
+    }
 
-onUnmounted(() => {
-  stopChecking()
+    if (enteredSub.value) {
+      subPolygonRef.value = drawGeoPolygon(map.value, enteredSub.value.subPolygonJson, subPolygonRef.value, 'sub')
+    }
+  }
 })
 </script>
 
