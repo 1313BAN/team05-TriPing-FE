@@ -1,3 +1,5 @@
+<!-- components/MyLocationButton.vue -->
+
 <script setup>
 import { useLocationStore } from '@/stores/locationStore'
 import gpsIcon from '../assets/icons/gps.png'
