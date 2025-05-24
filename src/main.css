@@ -17,3 +17,24 @@ html {
 .btn-small {
   @apply text-gray-400 text-sm hover:text-gray-600 transition cursor-pointer;
 }
+
+
+.p-toast-message-icon {
+  display: none !important;
+}
+
+.p-toast {
+  @apply px-0 md:w-96 w-11/12 z-1000;
+}
+
+.p-toast-message {
+  @apply border border-primary px-2 py-1 text-primary rounded-lg bg-white;
+}
+
+.p-toast-detail {
+  @apply text-[13px] text-gray-500;
+}
+
+.p-toast-close-button {
+  @apply w-3.5 h-3.5 mt-0.5
+}

@@ -36,7 +36,6 @@ const {
 
 const geoPolygonRef = ref(null)
 const subPolygonRef = ref(null)
-
 const drawerVisible = computed(() => isEntered.value)
 const buttonOffset = computed(() => (drawerVisible.value ? 310 : 24))
 

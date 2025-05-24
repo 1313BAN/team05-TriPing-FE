@@ -1,6 +1,6 @@
 <script setup>
 import MenuBar from './components/MenuBar.vue'
-import { watch, onMounted } from 'vue'
+import { watch, onMounted, ref } from 'vue'
 import { useDevStore } from '@/stores/devStore'
 import { useLocationStore } from '@/stores/locationStore'
 import { storeToRefs } from 'pinia'
@@ -8,13 +8,14 @@ import { startGlobalGeolocation, stopGlobalGeolocation } from '@/composables/use
 import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
 import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
 import { useVisitTracker } from '@/composables/useVisitTracker'
+import VisitLogToast from '@/components/VisitLogToast.vue'
 
 const devStore = useDevStore()
+const toastRef = ref()
 
-// 위치 추적
 watch(
   () => devStore.devMode,
-  (newVal) => {
+  () => {
     stopGlobalGeolocation()
     startGlobalGeolocation()
   },
@@ -25,12 +26,18 @@ const { lat, lng } = storeToRefs(useLocationStore())
 const { startChecking } = useGeoFenceChecker()
 
 onMounted(() => {
-  startChecking(() => getCurrentPositionFromStore(lat, lng)) // 지오펜싱 감지 전역 실행
-  useVisitTracker() // 방문 기록 추적
+  startChecking(() => getCurrentPositionFromStore(lat, lng))
+
+  const tracker = useVisitTracker()
+  tracker.setToastRef(toastRef)
 })
+
 </script>
 
 <template>
+  <Toast />
+  <VisitLogToast ref="toastRef" />
+
   <div class="h-screen flex flex-col md:justify-center">
     <div class="hidden md:block fixed top-0 left-0 p-4 z-50">
       <h1 class="text-2xl font-extrabold p-2 text-primary">TriPing.</h1>

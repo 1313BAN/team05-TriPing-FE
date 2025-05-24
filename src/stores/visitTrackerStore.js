@@ -11,7 +11,8 @@ export const useVisitTrackerStore = defineStore('visitTrackerStore', {
     confirmStartTime: null,
     pendingAttractionId: null,
     exitedAttractionId: null,
-    lastConfirmedId: null
+    lastConfirmedId: null,
+    lastConfirmedName: null
   }),
   actions: {
     reset() {
@@ -25,6 +26,7 @@ export const useVisitTrackerStore = defineStore('visitTrackerStore', {
       this.pendingAttractionId = null
       this.exitedAttractionId = null
       this.lastConfirmedId = null
+      this.lastConfirmedName = null
     }
   },
   persist: true

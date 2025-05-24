@@ -2,6 +2,9 @@ import { watch } from 'vue'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
 import { useLocationStore } from '@/stores/locationStore'
 import { useVisitTrackerStore } from '@/stores/visitTrackerStore'
+import { createVisitLog } from '@/api/visitLog'
+import { formatDurationToReadable } from '@/utils/formatDuration'
+let toastRef = null
 
 export function useVisitTracker() {
   const store = useEnteredZoneStore()
@@ -13,7 +16,7 @@ export function useVisitTracker() {
   const FINALIZE_TIME = 10000  // 외출 유예 시간 (배포환경 3분)
   const MIN_STAY_TIME = 15000  // 최소 체류 시간 (배포환경 5분)
 
-  const finalizeVisit = () => {
+  const finalizeVisit = async () => {
     const duration = visitState.totalStayTime
     console.log(`🔍 최종 체류시간: ${Math.floor(duration / 1000)}초`)
 
@@ -21,7 +24,18 @@ export function useVisitTracker() {
       console.log(
         `방문 처리: ${visitState.lastConfirmedId}, 체류 ${Math.floor(duration / 1000)}초`
       )
-      // TODO: 서버 전송 로직 삽입 가능
+      try {
+        await createVisitLog({
+          attractionNo: visitState.lastConfirmedId,
+          enteredAt: visitState.entryTime ?? Date.now() - duration,
+          exitedAt: Date.now()
+        })
+        console.log('✅ 서버 전송 완료')
+        const name = visitState.lastConfirmedName ?? '관광지'
+        toastRef.value?.show(name, duration)
+      } catch (error) {
+        console.error('❌ 서버 전송 실패:', error)
+      }
     } else {
       console.log(`방문 실패: ${Math.floor(duration / 1000)}초 < ${MIN_STAY_TIME / 1000}초`)
     }
@@ -128,6 +142,7 @@ export function useVisitTracker() {
           visitState.pendingAttractionId = null
           visitState.confirmStartTime = null
           visitState.lastConfirmedId = confirmedId
+          visitState.lastConfirmedName = store.attractionTitle // 관광지 이름 저장
           console.log(`✅ 관광지 확정됨: ${confirmedId}`)
         }
       }
@@ -136,6 +151,7 @@ export function useVisitTracker() {
   )
 
   return {
-    getState: () => ({ ...visitState })
+    getState: () => ({ ...visitState }),
+    setToastRef: (ref) => (toastRef = ref)
   }
 }
