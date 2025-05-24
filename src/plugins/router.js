@@ -10,13 +10,13 @@ import EditProfileView from '../pages/mypage/EditProfileView.vue'
 import AttractionDetail from '../pages/attraction/[id].vue'
 
 const routes = [
-  { path: '/', component: Home },
   { path: '/setting', component: Setting },
   { path: '/login', component: Login },
   { path: '/signup', component: SignUp },
   { path: '/attraction/:id', component: AttractionDetail, props: true },
 
   // 로그인 필요
+  { path: '/', component: Home, meta: { requiresAuth: true } },
   { path: '/myreview', component: MyReview, meta: { requiresAuth: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/mypage/edit', component: EditProfileView, meta: { requiresAuth: true } },
@@ -40,6 +40,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-// router.beforeEach((to, from, next) => {
 
 export default router
