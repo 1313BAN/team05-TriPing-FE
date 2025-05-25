@@ -3,6 +3,7 @@
 
 @theme {
   --color-primary: #e85f5c;
+  --color-sub: #e33834;
   --font-sans: 'Pretendard', 'sans-serif';
 }
 
@@ -37,4 +38,40 @@ html {
 
 .p-toast-close-button {
   @apply w-3.5 h-3.5 mt-0.5
+}
+
+/* fade-up.vue / 또는 전역 CSS에 */
+.fade-up-enter-active {
+  transition: all 0.4s ease;
+}
+.fade-up-leave-active {
+  transition: all 0.2s ease;
+}
+.fade-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.fade-up-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+
+@keyframes shake-x2 {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+}
+
+.shake {
+  animation: shake-x2 0.4s ease;
 }

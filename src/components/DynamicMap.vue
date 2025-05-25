@@ -4,9 +4,10 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useLocationStore } from '@/stores/locationStore'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
+import { useUiStore } from '@/stores/uiStore'
 import { drawGeoPolygon, fadeOutPolygon } from '@/composables/useMapPolygons'
 import { useMapController } from '@/composables/map/useMapController'
-
+import RecommendationButton from '@/components/RecommendationButton.vue'
 import MyLocationButton from '@/components/MyLocationButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
@@ -16,6 +17,8 @@ const router = useRouter()
 
 const { lat, lng } = storeToRefs(useLocationStore())
 const enteredZoneStore = useEnteredZoneStore()
+const uiStore = useUiStore()
+const { isRecommendDrawerOpen } = storeToRefs(uiStore)
 const { isEntered, polygonData, enteredSubAttractionId, parsedSubAttractions } =
   storeToRefs(enteredZoneStore)
 
@@ -36,7 +39,10 @@ const {
 const geoPolygonRef = ref(null)
 const subPolygonRef = ref(null)
 const drawerVisible = computed(() => isEntered.value)
-const buttonOffset = computed(() => (drawerVisible.value ? 310 : 24))
+const buttonOffset = computed(() =>
+  drawerVisible.value || isRecommendDrawerOpen.value ? 310 : 24
+)
+
 
 watch([lat, lng], ([newLat, newLng]) => {
   if (!map.value && newLat && newLng) {
@@ -93,6 +99,7 @@ onMounted(() => {
         @update:modelValue="toggleAttractionPins"
       />
       <GeoFenceDrawer />
+      <RecommendationButton />
     </div>
   </div>
 </template>
