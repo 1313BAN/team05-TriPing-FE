@@ -101,7 +101,6 @@ export function useVisitTracker() {
     [() => locationStore.lat, () => locationStore.lng],
     () => {
       const now = Date.now()
-      console.log(new Date(now).toLocaleString())
       if (
         store.attractionId === null &&
         visitState.isActive &&
