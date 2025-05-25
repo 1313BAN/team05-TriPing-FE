@@ -8,6 +8,7 @@ import SignUp from '../pages/SignUp.vue'
 import ChangePasswordView from '../pages/mypage/ChangePasswordView.vue'
 import EditProfileView from '../pages/mypage/EditProfileView.vue'
 import AttractionDetail from '../pages/attraction/[id].vue'
+import Guide from '@/pages/guide/[id].vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/signup', component: SignUp },
   { path: '/attraction/:id', component: AttractionDetail, props: true },
+  { path: '/guide/:id', component: Guide, props: true },
 
   // 로그인 필요
   { path: '/myreview', component: MyReview, meta: { requiresAuth: true } },
