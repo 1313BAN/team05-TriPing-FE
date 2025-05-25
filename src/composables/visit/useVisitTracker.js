@@ -5,6 +5,7 @@ import { useVisitTrackerStore } from '@/stores/visitTrackerStore'
 import { createVisitLog } from '@/api/visitLog'
 import { formatDurationToReadable } from '@/utils/formatDuration'
 let toastRef = null
+let openVisitPrefModal = null 
 
 export function useVisitTracker() {
   const store = useEnteredZoneStore()
@@ -32,8 +33,13 @@ export function useVisitTracker() {
         const name = visitState.lastConfirmedName || '관광지'
         console.log(`방문 완료: ${name}, 체류 시간: ${formatDurationToReadable(duration)}`)
         toastRef.value?.show(name, duration)
+        // 7초 뒤 방문 평가 모달 열기
+        if (typeof openVisitPrefModal === 'function') {
+          setTimeout(() => {
+            openVisitPrefModal(visitState.lastConfirmedId, name)
+          }, 7000)
+        }
       }
-      // 실패 시 아무 일도 하지 않음 (콘솔에만 로그 있음)
     } else {
       console.log(`방문 실패: ${Math.floor(duration / 1000)}초 < ${MIN_STAY_TIME / 1000}초`)
     }
@@ -149,6 +155,7 @@ export function useVisitTracker() {
 
   return {
     getState: () => ({ ...visitState }),
-    setToastRef: (ref) => (toastRef = ref)
+    setToastRef: (ref) => (toastRef = ref),
+    setVisitPrefModalOpener: (fn) => (openVisitPrefModal = fn)
   }
 }
