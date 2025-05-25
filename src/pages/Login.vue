@@ -58,17 +58,15 @@ import Password from 'primevue/password'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
-import api from '@/api'
+import { login } from '@/api/auth' // ✅ auth.js에서 import
 import { getMyInfo } from '@/api/user'
-import { useUserStore } from '@/stores/user' // ✅ 수정된 import
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const loginFailMessage = ref('')
-
-// ✅ Pinia 스토어 인스턴스
 const userStore = useUserStore()
 
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$/
@@ -83,23 +81,13 @@ const handleLogin = async () => {
   if (!isEmailValid.value || !isPasswordValid.value) return
 
   try {
-    const response = await api.post(
-      '/auth/login',
-      {
-        email: email.value,
-        password: password.value
-      },
-      {
-        validateStatus: () => true
-      }
-    )
+    const response = await login(email.value, password.value)
 
     const authHeader = response.headers['authorization'] || response.headers['Authorization']
     if (response.status === 200 && authHeader) {
       const token = authHeader.replace('Bearer ', '')
-      localStorage.setItem('accessToken', token)
 
-      // ✅ 로그인 성공 후 사용자 정보 조회
+      localStorage.setItem('accessToken', token)
       const res = await getMyInfo()
       userStore.setUser(res.data)
 
@@ -111,4 +99,5 @@ const handleLogin = async () => {
     loginFailMessage.value = '서버 오류가 발생했습니다.'
   }
 }
+
 </script>

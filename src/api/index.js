@@ -1,16 +1,18 @@
 import axios from 'axios'
-import * as jwt_decode from 'jwt-decode'
-import router from '@/plugins/router' // 라우터 객체 import
+import router from '@/plugins/router'
+import { jwtDecode } from 'jwt-decode'
 
 function isTokenExpired(token) {
   try {
-    const { exp } = jwt_decode(token)
+    const { exp } = jwtDecode(token)
     const now = Math.floor(Date.now() / 1000)
     return exp < now
   } catch (e) {
-    return true // 디코딩 실패 시 만료 처리
+    console.warn('JWT 디코딩 실패:', e)
+    return true
   }
 }
+
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -20,22 +22,24 @@ const api = axios.create({
 })
 
 // request 인터셉터
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('accessToken')
-    if (token) {
-      if (isTokenExpired(token)) {
-        // 만료된 경우
-        localStorage.removeItem('accessToken')
-        router.push('/login') // 로그인 페이지로 이동
-        return Promise.reject(new Error('Token expired'))
-      }
-      config.headers.Authorization = `Bearer ${token}`
-    }
+api.interceptors.request.use((config) => {
+  const publicPaths = ['/auth/login', '/auth/signup', '/auth/forgot-password']
+  const isPublic = publicPaths.some((path) => config.url?.includes(path))
+  if (isPublic) {
     return config
-  },
-  (error) => Promise.reject(error)
-)
+  }
+  
+  const token = localStorage.getItem('accessToken')
+  if (!token || isTokenExpired(token)) {
+    localStorage.removeItem('accessToken')
+    router.push('/login')
+    return Promise.reject(new Error('Token expired'))
+  }
+
+  config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
 
 // response 인터셉터
 api.interceptors.response.use(
