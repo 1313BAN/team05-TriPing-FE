@@ -21,21 +21,19 @@ export function useVisitTracker() {
     console.log(`🔍 최종 체류시간: ${Math.floor(duration / 1000)}초`)
 
     if (duration >= MIN_STAY_TIME) {
-      console.log(
-        `방문 처리: ${visitState.lastConfirmedId}, 체류 ${Math.floor(duration / 1000)}초`
-      )
-      try {
-        await createVisitLog({
-          attractionNo: visitState.lastConfirmedId,
-          enteredAt: visitState.entryTime ?? Date.now() - duration,
-          exitedAt: Date.now()
-        })
-        console.log('✅ 서버 전송 완료')
-        const name = visitState.lastConfirmedName ?? '관광지'
+      console.log(`방문 처리: ${visitState.lastConfirmedId}, 체류 ${Math.floor(duration / 1000)}초`)
+      const success = await createVisitLog({
+        attractionNo: visitState.lastConfirmedId,
+        enteredAt: visitState.entryTime ?? Date.now() - duration,
+        exitedAt: Date.now()
+      })
+
+      if (success) {
+        const name = visitState.lastConfirmedName || '관광지'
+        console.log(`방문 완료: ${name}, 체류 시간: ${formatDurationToReadable(duration)}`)
         toastRef.value?.show(name, duration)
-      } catch (error) {
-        console.error('❌ 서버 전송 실패:', error)
       }
+      // 실패 시 아무 일도 하지 않음 (콘솔에만 로그 있음)
     } else {
       console.log(`방문 실패: ${Math.floor(duration / 1000)}초 < ${MIN_STAY_TIME / 1000}초`)
     }
@@ -103,7 +101,7 @@ export function useVisitTracker() {
     [() => locationStore.lat, () => locationStore.lng],
     () => {
       const now = Date.now()
-
+      console.log(new Date(now).toLocaleString())
       if (
         store.attractionId === null &&
         visitState.isActive &&
