@@ -142,6 +142,7 @@ const subAttractionTitle = computed(() => {
 })
 
 function onGuideClick(title) {
+  router.push(`/guide/${attractionId.value}`)
   console.log(`${title} 가이드 클릭`)
 }
 
