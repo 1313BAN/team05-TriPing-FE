@@ -5,7 +5,7 @@ import { useVisitTrackerStore } from '@/stores/visitTrackerStore'
 import { createVisitLog } from '@/api/visitLog'
 import { formatDurationToReadable } from '@/utils/formatDuration'
 let toastRef = null
-let openVisitPrefModal = null 
+let openVisitPrefModal = null
 
 export function useVisitTracker() {
   const store = useEnteredZoneStore()
@@ -13,9 +13,9 @@ export function useVisitTracker() {
   const visitState = useVisitTrackerStore()
 
   // 테스트용 시간 (ms)
-  const CONFIRM_TIME = 3000  // 관광지 확정 대기 시간 (배포환경 30초)
-  const FINALIZE_TIME = 10000  // 외출 유예 시간 (배포환경 3분)
-  const MIN_STAY_TIME = 15000  // 최소 체류 시간 (배포환경 5분)
+  const CONFIRM_TIME = 3000 // 관광지 확정 대기 시간 (배포환경 30초)
+  const FINALIZE_TIME = 8000 // 외출 유예 시간 (배포환경 3분)
+  const MIN_STAY_TIME = 11000 // 최소 체류 시간 (배포환경 5분)
 
   const finalizeVisit = async () => {
     const duration = visitState.totalStayTime
@@ -29,6 +29,10 @@ export function useVisitTracker() {
         exitedAt: Date.now()
       })
 
+      const visitLogId = success?.id
+      console.log(success)
+      console.log(`방문 기록 ID: ${visitLogId}`)
+
       if (success) {
         const name = visitState.lastConfirmedName || '관광지'
         console.log(`방문 완료: ${name}, 체류 시간: ${formatDurationToReadable(duration)}`)
@@ -36,7 +40,7 @@ export function useVisitTracker() {
         // 7초 뒤 방문 평가 모달 열기
         if (typeof openVisitPrefModal === 'function') {
           setTimeout(() => {
-            openVisitPrefModal(visitState.lastConfirmedId, name)
+            openVisitPrefModal(visitLogId, name)
           }, 7000)
         }
       }

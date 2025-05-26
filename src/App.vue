@@ -21,11 +21,7 @@ const devStore = useDevStore()
 const toastRef = ref()
 
 // useVisitPrefController에 상태 전달
-const { handleSubmit, init } = useVisitPrefController(
-  visitPrefVisible,
-  visitPrefId,
-  visitPrefTitle
-)
+const { handleSubmit, init } = useVisitPrefController(visitPrefVisible, visitPrefId, visitPrefTitle)
 
 watch(
   () => devStore.devMode,
@@ -57,10 +53,11 @@ onMounted(() => {
   <VisitPrefModal
     :visible="visitPrefVisible"
     @update:visible="visitPrefVisible = $event"
-    :attraction-id="visitPrefId"
+    :visit-log-id="visitPrefId"
     :title="visitPrefTitle"
     @submit="handleSubmit"
   />
+
   <div class="h-screen flex flex-col md:justify-center">
     <div class="hidden md:block fixed top-0 left-0 p-4 z-50">
       <h1 class="text-2xl font-extrabold p-2 text-primary">TriPing.</h1>

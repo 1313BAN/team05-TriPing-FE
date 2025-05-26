@@ -7,16 +7,12 @@
     :pt="{
       root: 'rounded-2xl p-5',
       header: 'hidden',
-      content: 'flex flex-col items-center space-y-6',
+      content: 'flex flex-col items-center space-y-6'
     }"
   >
     <div class="text-center w-full">
-      <div class="text-lg font-semibold mb-2">
-        {{ title }} 방문은 어떠셨나요?
-      </div>
-      <p class="text-sm text-gray-500">
-        만족도를 남겨주세요!
-      </p>
+      <div class="text-lg font-semibold mb-2">{{ title }} 방문은 어떠셨나요?</div>
+      <p class="text-sm text-gray-500">만족도를 남겨주세요!</p>
     </div>
 
     <div class="flex flex-wrap justify-center gap-2 w-full max-w-[260px]">
@@ -28,7 +24,7 @@
           'w-10 h-10 rounded-full text-md font-medium border-gray-300',
           selectedScore === score
             ? 'bg-primary text-white border-primary'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
         ]"
         @click="selectScore(score)"
       ></Button>
@@ -54,9 +50,9 @@
 import { ref, watch, defineEmits, defineProps } from 'vue'
 
 const props = defineProps({
-  attractionId: { type: Number, required: true },
+  visitLogId: { type: Number, required: true },
   title: { type: String, required: true },
-  visible: { type: Boolean, required: true },
+  visible: { type: Boolean, required: true }
 })
 
 const emit = defineEmits(['update:visible', 'submit'])
@@ -64,11 +60,14 @@ const emit = defineEmits(['update:visible', 'submit'])
 const selectedScore = ref(null)
 
 // visible 상태가 변경될 때 selectedScore 초기화
-watch(() => props.visible, (newVal) => {
-  if (!newVal) {
-    selectedScore.value = null
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (!newVal) {
+      selectedScore.value = null
+    }
   }
-})
+)
 
 function updateVisible(value) {
   emit('update:visible', value)
@@ -79,9 +78,10 @@ function selectScore(score) {
 }
 
 function submit() {
+  console.log('[🟢 제출 전 visitLogId 확인]', props.visitLogId)
   emit('submit', {
-    attractionId: props.attractionId,
-    score: selectedScore.value,
+    visitLogId: props.visitLogId,
+    score: selectedScore.value
   })
   emit('update:visible', false)
   selectedScore.value = null
@@ -91,5 +91,4 @@ function close() {
   emit('update:visible', false)
   selectedScore.value = null
 }
-
 </script>

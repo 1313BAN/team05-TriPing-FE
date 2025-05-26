@@ -4,6 +4,7 @@
 @theme {
   --color-primary: #e85f5c;
   --color-sub: #e33834;
+  --color-blue: #0064ff;
   --font-sans: 'Pretendard', 'sans-serif';
 }
 
@@ -13,6 +14,10 @@ html {
 
 .btn-primary {
   @apply bg-primary text-white px-4 py-2 rounded-md border-0 hover:opacity-90 cursor-pointer;
+}
+
+.btn-sub {
+  @apply text-gray-700 border border-gray-400 bg-transparent px-4 py-2 rounded-md hover:bg-gray-700 hover:text-white cursor-pointer;
 }
 
 .btn-small {

@@ -6,7 +6,7 @@
       <Button
         icon="pi pi-arrow-left"
         class="btn-primary text-sm md:w-32 w-16"
-        :disabled="page <= 1"
+        :class="{ 'opacity-0 pointer-events-none': page <= 1 }"
         @click="goToPrevPage"
       >
         <span class="hidden md:inline">← 이전 날짜로</span>
@@ -23,7 +23,7 @@
         icon="pi pi-arrow-right"
         iconPos="right"
         class="btn-primary text-sm md:w-32 w-16"
-        :disabled="page >= totalCount"
+        :class="{ 'opacity-0 pointer-events-none': page >= totalCount }"
         @click="goToNextPage"
       >
         <span class="hidden md:inline">다음 날짜로 →</span>
@@ -31,33 +31,18 @@
       </Button>
     </div>
 
-    <!-- 방문기록 카드 리스트 -->
-    <div v-if="logs.length > 0" class="w-full flex flex-col">
-      <div v-for="(log, index) in logs" :key="log.visitLogId">
-        <!-- 카드 -->
-        <div class="border border-gray-200 rounded-2xl shadow-sm p-5 bg-white">
-          <!-- 방문 시간 -->
-          <div class="text-sm text-gray-500 mb-2">
-            {{ formatTime(log.enteredAt) }} ~ {{ formatTime(log.exitedAt) }} ({{
-              getStayDurationText(log.enteredAt, log.exitedAt)
-            }})
-          </div>
-
-          <!-- 장소명 -->
-          <div class="text-lg font-semibold text-gray-800 border-l-4 border-primary pl-4">
-            {{ log.title }}
-          </div>
-        </div>
-
-        <!-- 카드와 카드 사이의 화살표 -->
-        <div v-if="index < logs.length - 1" class="flex justify-center my-1 text-primary text-2xl">
-          ↓
-        </div>
-      </div>
-    </div>
+    <VisitMap :logs="logs" />
+    <VisitLogList :logs="logs" @preference-click="handlePreferenceClick" />
+    <VisitPrefModal
+      :visible="visitPrefVisible"
+      :visit-log-id="visitPrefId"
+      :title="visitPrefTitle"
+      @update:visible="visitPrefVisible = $event"
+      @submit="handlePrefSubmit"
+    />
 
     <!-- 하단 페이지네이션 -->
-    <div class="flex justify-center mt-10">
+    <div class="flex justify-center mt-10 md:mb-0 mb-12">
       <Paginator :rows="1" :totalRecords="totalCount" :first="page - 1" @page="onPageChange" />
     </div>
   </div>
@@ -65,16 +50,17 @@
 
 <script setup>
 import Button from 'primevue/button'
-import Card from 'primevue/card'
 import Paginator from 'primevue/paginator'
-
+import VisitLogList from '@/components/VisitLogList.vue'
 import { ref, onMounted } from 'vue'
 import { getMyVisitLog } from '@/api/visitLog'
-
+import VisitPrefModal from '@/components/VisitPrefModal.vue'
+import { useVisitPrefController } from '@/composables/visit/useVisitPrefController'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/ko'
+import VisitMap from '@/components/VisitMap.vue'
 
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
@@ -83,11 +69,14 @@ dayjs.locale('ko')
 const page = ref(1)
 const logs = ref([])
 const totalCount = ref(0)
+const visitPrefVisible = ref(false)
+const visitPrefId = ref(null)
+const visitPrefTitle = ref('')
 
 const fetchLogs = async () => {
   try {
     const res = await getMyVisitLog(page.value)
-    logs.value = res.data.visitLogs
+    logs.value = res.data.visitLogs.reverse()
     totalCount.value = res.data.totalCount
   } catch (err) {
     console.error('방문기록 불러오기 실패:', err)
@@ -115,24 +104,15 @@ const goToNextPage = () => {
   }
 }
 
-const formatTime = (datetime) => {
-  return dayjs(datetime).format('HH:mm')
+const handlePreferenceClick = (log) => {
+  visitPrefId.value = log.visitLogId
+  visitPrefTitle.value = log.title
+  visitPrefVisible.value = true
 }
-
-const fromNow = (datetime) => {
-  return dayjs(datetime).fromNow()
-}
-
-const getStayDurationText = (enteredAt, exitedAt) => {
-  const start = dayjs(enteredAt)
-  const end = dayjs(exitedAt)
-  const diff = end.diff(start, 'minute')
-
-  const hours = Math.floor(diff / 60)
-  const minutes = diff % 60
-
-  if (hours && minutes) return `${hours}시간 ${minutes}분`
-  if (hours) return `${hours}시간`
-  return `${minutes}분`
-}
+const { handleSubmit: handlePrefSubmit } = useVisitPrefController(
+  visitPrefVisible,
+  visitPrefId,
+  visitPrefTitle,
+  fetchLogs // ✅ 필요 시 최신 데이터 다시 불러오기
+)
 </script>
