@@ -4,14 +4,21 @@
   </div>
 
   <div v-else class="p-6 max-w-3xl mx-auto space-y-8 pb-32">
-    <h1 class="text-3xl font-bold text-gray-800">📍 {{ guide.title }} 여행 가이드</h1>
+    <h1 class="md:text-3xl text-2xl font-bold text-gray-800 flex items-center gap-2">
+  <i
+    class="pi pi-angle-left text-gray-600 text-2xl cursor-pointer"
+    @click="$router.go(-1)"
+  ></i>
+  {{ guide.title }} 여행 가이드
+</h1>
+
 
     <!-- 탭 버튼 -->
     <div class="sticky top-0 z-40 pt-4 pb-6 blur-gradient-header">
       <div class="relative">
         <button
           @click="scrollLeft"
-          class="hidden md:flex items-center justify-center absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8"
+          class="hidden md:flex items-center justify-center absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8 cursor-pointer"
         >
           <i class="pi pi-angle-left text-gray-600"></i>
         </button>
@@ -25,7 +32,7 @@
             :key="tab.key"
             @click="scrollToSection(tab.key)"
             :class="[
-              'px-4 py-2 rounded-3xl border text-sm font-medium transition shrink-0',
+              'px-4 py-2 rounded-3xl border text-sm font-medium transition shrink-0 cursor-pointer',
               selectedTab === tab.key
                 ? 'bg-primary text-white border-primary'
                 : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'
@@ -37,7 +44,7 @@
 
         <button
           @click="scrollRight"
-          class="hidden md:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8"
+          class="hidden md:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8 cursor-pointer"
         >
           <i class="pi pi-angle-right text-gray-600"></i>
         </button>
@@ -46,9 +53,9 @@
 
     <!-- 기본 정보 -->
     <Card
+      v-if="hasBasicInfo"
       id="basic"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
-      v-if="hasBasicInfo"
     >
       <template #title>📌 기본 정보</template>
       <template #content>
@@ -88,6 +95,7 @@
 
     <!-- 상세 정보 -->
     <Card
+      v-if="hasInfo"
       id="info"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
     >
@@ -99,19 +107,9 @@
       </template>
     </Card>
 
+    <!-- 역사 -->
     <Card
-      id="tip"
-      class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
-    >
-      <template #title>✨ 꿀팁</template>
-      <template #content>
-        <ul class="list-disc pl-6 text-base text-gray-700 leading-relaxed space-y-2">
-          <li v-for="(item, index) in guide.tip" :key="index">{{ item }}</li>
-        </ul>
-      </template>
-    </Card>
-
-    <Card
+      v-if="hasHistory"
       id="history"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
     >
@@ -123,9 +121,24 @@
       </template>
     </Card>
 
+    <!-- 꿀팁 -->
     <Card
+      v-if="hasTip"
+      id="tip"
+      class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
+    >
+      <template #title>✨ 꿀팁</template>
+      <template #content>
+        <ul class="list-disc pl-6 text-base text-gray-700 leading-relaxed space-y-2">
+          <li v-for="(item, index) in guide.tip" :key="index">{{ item }}</li>
+        </ul>
+      </template>
+    </Card>
+
+    <!-- 포토스팟 -->
+    <Card
+      v-if="hasPhotoSpots"
       id="photospot"
-      v-if="guide.photoSpots?.length"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
     >
       <template #title>📸 포토스팟</template>
@@ -136,9 +149,10 @@
       </template>
     </Card>
 
+    <!-- 주변 맛집 -->
     <Card
+      v-if="hasRestaurants"
       id="restaurants"
-      v-if="guide.restaurants?.length"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
     >
       <template #title>🍽️ 주변 맛집</template>
@@ -157,10 +171,11 @@
       </template>
     </Card>
 
+    <!-- 관련 동영상 -->
     <Card
+      v-if="hasVideo"
       id="video"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
-      v-if="hasVideo"
     >
       <template #title>📺 관련 동영상</template>
       <template #content>
@@ -187,9 +202,10 @@
       </template>
     </Card>
 
+    <!-- 편의시설 -->
     <Card
+      v-if="hasAmenities"
       id="amenities"
-      v-if="guide.amenities?.length"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
     >
       <template #title>🚻 편의시설</template>
@@ -282,10 +298,10 @@ const hasVideo = computed(() => {
 const tabs = computed(() => {
   const result = []
   if (hasBasicInfo.value) result.push({ label: '기본정보', key: 'basic' })
-  if (hasTip.value) result.push({ label: '꿀팁', key: 'tip' })
   if (hasInfo.value) result.push({ label: '상세 정보', key: 'info' })
-  if (hasPhotoSpots.value) result.push({ label: '포토스팟', key: 'photospot' })
   if (hasHistory.value) result.push({ label: '역사', key: 'history' })
+  if (hasTip.value) result.push({ label: '꿀팁', key: 'tip' })
+  if (hasPhotoSpots.value) result.push({ label: '포토스팟', key: 'photospot' })
   if (hasRestaurants.value) result.push({ label: '맛집', key: 'restaurants' })
   if (hasVideo.value) result.push({ label: '관련 동영상', key: 'video' })
   if (hasAmenities.value) result.push({ label: '편의시설', key: 'amenities' })

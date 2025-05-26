@@ -1,19 +1,23 @@
 <template>
   <div v-if="!guideLoaded" class="flex justify-center items-center h-[300px]">
-    <div class="text-lg text-gray-500 animate-pulse">AI 서브 가이드를 생성 중이에요...</div>
+    <div class="text-lg text-gray-500 animate-pulse">AI 가이드를 생성 중이에요...</div>
   </div>
 
   <div v-else class="p-6 max-w-3xl mx-auto space-y-8 pb-32">
-    <h1 class="text-3xl font-bold text-gray-800">
-      📍 {{ guide.title }} - {{ guide.subtitle }} 가이드
-    </h1>
+    <h1 class="md:text-3xl text-2xl font-bold text-gray-800 flex items-center gap-2">
+  <i
+    class="pi pi-angle-left text-gray-600 text-2xl cursor-pointer"
+    @click="$router.go(-1)"
+  ></i>
+  {{ guide.title }} - {{ guide.subtitle }} 가이드
+</h1>
 
     <!-- 탭 버튼 -->
     <div class="sticky top-0 z-40 pt-4 pb-6 blur-gradient-header" v-if="tabs.length">
       <div class="relative">
         <button
           @click="scrollLeft"
-          class="hidden md:flex items-center justify-center absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8"
+          class="hidden md:flex items-center justify-center absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8 cursor-pointer"
         >
           <i class="pi pi-angle-left text-gray-600"></i>
         </button>
@@ -27,7 +31,7 @@
             :key="tab.key"
             @click="scrollToSection(tab.key)"
             :class="[
-              'px-4 py-2 rounded-3xl border text-sm font-medium transition shrink-0',
+              'px-4 py-2 rounded-3xl border text-sm font-medium transition shrink-0 cursor-pointer',
               selectedTab === tab.key
                 ? 'bg-primary text-white border-primary'
                 : 'bg-white text-gray-800 border-gray-300 hover:bg-gray-100'
@@ -39,7 +43,7 @@
 
         <button
           @click="scrollRight"
-          class="hidden md:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8"
+          class="hidden md:flex items-center justify-center absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow w-8 h-8 cursor-pointer"
         >
           <i class="pi pi-angle-right text-gray-600"></i>
         </button>
