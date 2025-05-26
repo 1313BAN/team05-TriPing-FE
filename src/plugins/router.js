@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../pages/Home.vue'
-import MyReview from '../pages/MyReview.vue'
+import VisitLog from '../pages/VisitLog.vue'
 import MyPage from '../pages/MyPage.vue'
 import Setting from '../pages/Setting.vue'
 import Login from '../pages/Login.vue'
@@ -19,7 +19,7 @@ const routes = [
 
   // 로그인 필요
   { path: '/', component: Home, meta: { requiresAuth: true } },
-  { path: '/myreview', component: MyReview, meta: { requiresAuth: true } },
+  { path: '/visit-log', component: VisitLog, meta: { requiresAuth: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/mypage/edit', component: EditProfileView, meta: { requiresAuth: true } },
   { path: '/mypage/change-password', component: ChangePasswordView, meta: { requiresAuth: true } },

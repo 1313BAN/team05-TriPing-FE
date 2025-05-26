@@ -32,7 +32,7 @@ import { RouterLink } from 'vue-router'
 
 const navItems = [
   { path: '/', icon: 'pi-map' },
-  { path: '/myreview', icon: 'pi-calendar-clock' },
+  { path: '/visit-log', icon: 'pi-calendar-clock' },
   { path: '/mypage', icon: 'pi-user' },
   { path: '/setting', icon: 'pi-ellipsis-h' }
 ]

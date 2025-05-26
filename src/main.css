@@ -19,7 +19,6 @@ html {
   @apply text-gray-400 text-sm hover:text-gray-600 transition cursor-pointer;
 }
 
-
 .p-toast-message-icon {
   display: none !important;
 }
@@ -37,7 +36,7 @@ html {
 }
 
 .p-toast-close-button {
-  @apply w-3.5 h-3.5 mt-0.5
+  @apply w-3.5 h-3.5 mt-0.5;
 }
 
 /* fade-up.vue / 또는 전역 CSS에 */
@@ -64,14 +63,26 @@ html {
   transform: translateY(10px);
 }
 
-
 @keyframes shake-x2 {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
 }
 
 .shake {
   animation: shake-x2 0.4s ease;
+}
+
+.p-paginator-page.p-paginator-page-selected {
+  @apply bg-transparent font-semibold text-primary;
 }

@@ -3,11 +3,12 @@ import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Divider from 'primevue/divider'
-import { ToggleSwitch } from 'primevue'
+import ToggleSwitch from 'primevue/toggleswitch'
 import Card from 'primevue/card'
 import ConfirmDialog from 'primevue/confirmdialog'
 import Panel from 'primevue/panel'
 import Image from 'primevue/image'
+import Paginator from 'primevue/paginator'
 
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
@@ -24,7 +25,7 @@ export default {
     app.component('ConfirmDialog', ConfirmDialog)
     app.component('Panel', Panel)
     app.component('Image', Image)
-
+    app.component('Paginator', Paginator)
     app.use(ToastService)
     app.use(ConfirmationService)
   }
