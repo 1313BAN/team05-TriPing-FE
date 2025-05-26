@@ -1,7 +1,6 @@
-// src/composables/useMapController.js
 import { ref } from 'vue'
 import { loadAttractionMarkers, updateMyMarkerPosition } from '@/composables/map/useMapMarkers'
-import { setMockMarker } from '@/composables/useGlobalGeolocation'
+import { setMockMarker } from '@/composables/location/useGlobalGeolocation'
 import { useLocationStore } from '@/stores/locationStore'
 import { storeToRefs } from 'pinia'
 
@@ -90,7 +89,6 @@ export function useMapController({ router }) {
       router
     })
   }
-  
 
   return {
     map,

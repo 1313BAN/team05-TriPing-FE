@@ -1,5 +1,5 @@
-import { useDevStore } from '../stores/devStore'
-import { useLocationStore } from '../stores/locationStore'
+import { useDevStore } from '../../stores/devStore'
+import { useLocationStore } from '../../stores/locationStore'
 import { animateMarker } from '@/utils/mapUtils'
 // 전역에서 선언되어야 유지됨
 let watchId = null

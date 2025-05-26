@@ -5,13 +5,13 @@ import { storeToRefs } from 'pinia'
 import { useLocationStore } from '@/stores/locationStore'
 import { useEnteredZoneStore } from '@/stores/enteredZoneStore'
 import { useUiStore } from '@/stores/uiStore'
-import { drawGeoPolygon, fadeOutPolygon } from '@/composables/useMapPolygons'
+import { drawGeoPolygon, fadeOutPolygon } from '@/composables/geofence/useMapPolygons'
 import { useMapController } from '@/composables/map/useMapController'
-import RecommendationButton from '@/components/RecommendationButton.vue'
-import MyLocationButton from '@/components/MyLocationButton.vue'
+import RecommendationButton from '@/components/recommendation/RecommendationButton.vue'
+import MyLocationButton from '@/components/map/MyLocationButton.vue'
 import SearchByViewportButton from './SearchByViewportButton.vue'
 import AttractionToggleButton from './AttractionToggleButton.vue'
-import GeoFenceDrawer from '@/components/GeoFenceDrawer.vue'
+import GeoFenceDrawer from '@/components/map/GeoFenceDrawer.vue'
 
 const router = useRouter()
 
@@ -39,10 +39,7 @@ const {
 const geoPolygonRef = ref(null)
 const subPolygonRef = ref(null)
 const drawerVisible = computed(() => isEntered.value)
-const buttonOffset = computed(() =>
-  drawerVisible.value || isRecommendDrawerOpen.value ? 310 : 24
-)
-
+const buttonOffset = computed(() => (drawerVisible.value || isRecommendDrawerOpen.value ? 310 : 24))
 
 watch([lat, lng], ([newLat, newLng]) => {
   if (!map.value && newLat && newLng) {
@@ -76,11 +73,21 @@ onMounted(() => {
   }
   if (map.value) {
     if (isEntered.value && polygonData.value) {
-      geoPolygonRef.value = drawGeoPolygon(map.value, polygonData.value, geoPolygonRef.value, 'parent')
+      geoPolygonRef.value = drawGeoPolygon(
+        map.value,
+        polygonData.value,
+        geoPolygonRef.value,
+        'parent'
+      )
     }
 
     if (enteredSub.value) {
-      subPolygonRef.value = drawGeoPolygon(map.value, enteredSub.value.subPolygonJson, subPolygonRef.value, 'sub')
+      subPolygonRef.value = drawGeoPolygon(
+        map.value,
+        enteredSub.value.subPolygonJson,
+        subPolygonRef.value,
+        'sub'
+      )
     }
   }
 })

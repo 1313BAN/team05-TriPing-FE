@@ -1,6 +1,6 @@
 <script setup>
-import { useGeolocationPermission } from '../composables/useGeolocationPermission'
-import DynamicMap from '../components/DynamicMap.vue'
+import { useGeolocationPermission } from '../composables/location/useGeolocationPermission'
+import DynamicMap from '../components/map/DynamicMap.vue'
 import { Button } from 'primevue'
 
 const { permissionState, errorMessage, requestPermission } = useGeolocationPermission(5)

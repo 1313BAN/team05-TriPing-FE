@@ -51,16 +51,16 @@
 <script setup>
 import Button from 'primevue/button'
 import Paginator from 'primevue/paginator'
-import VisitLogList from '@/components/VisitLogList.vue'
+import VisitLogList from '@/components/visitLog/VisitLogList.vue'
 import { ref, onMounted } from 'vue'
 import { getMyVisitLog } from '@/api/visitLog'
-import VisitPrefModal from '@/components/VisitPrefModal.vue'
+import VisitPrefModal from '@/components/visitLog/VisitPrefModal.vue'
 import { useVisitPrefController } from '@/composables/visit/useVisitPrefController'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import duration from 'dayjs/plugin/duration'
 import 'dayjs/locale/ko'
-import VisitMap from '@/components/VisitMap.vue'
+import VisitMap from '@/components/visitLog/VisitMap.vue'
 
 dayjs.extend(relativeTime)
 dayjs.extend(duration)

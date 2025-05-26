@@ -1,14 +1,17 @@
 <script setup>
 import MenuBar from './components/MenuBar.vue'
-import VisitLogToast from '@/components/VisitLogToast.vue'
-import VisitPrefModal from '@/components/VisitPrefModal.vue'
+import VisitLogToast from '@/components/visitLog/VisitLogToast.vue'
+import VisitPrefModal from '@/components/visitLog/VisitPrefModal.vue'
 import { ref, onMounted, watch } from 'vue'
 import { useDevStore } from '@/stores/devStore'
 import { useLocationStore } from '@/stores/locationStore'
 import { storeToRefs } from 'pinia'
-import { startGlobalGeolocation, stopGlobalGeolocation } from '@/composables/useGlobalGeolocation'
-import { getCurrentPositionFromStore } from '@/composables/useLocationUtils'
-import { useGeoFenceChecker } from '@/composables/useGeoFenceChecker'
+import {
+  startGlobalGeolocation,
+  stopGlobalGeolocation
+} from '@/composables/location/useGlobalGeolocation'
+import { getCurrentPositionFromStore } from '@/composables/location/useLocationUtils'
+import { useGeoFenceChecker } from '@/composables/geofence/useGeoFenceChecker'
 import { useVisitTracker } from '@/composables/visit/useVisitTracker'
 import { useVisitPrefController } from '@/composables/visit/useVisitPrefController'
 

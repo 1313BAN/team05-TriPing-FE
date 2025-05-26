@@ -2,7 +2,7 @@
 
 <script setup>
 import { useLocationStore } from '@/stores/locationStore'
-import gpsIcon from '../assets/icons/gps.png'
+import gpsIcon from '@/assets/icons/gps.png'
 
 const props = defineProps({
   offsetBottom: {
