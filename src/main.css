@@ -19,7 +19,6 @@ html {
   @apply text-gray-400 text-sm hover:text-gray-600 transition cursor-pointer;
 }
 
-
 .p-toast-message-icon {
   display: none !important;
 }
@@ -37,7 +36,7 @@ html {
 }
 
 .p-toast-close-button {
-  @apply w-3.5 h-3.5 mt-0.5
+  @apply w-3.5 h-3.5 mt-0.5;
 }
 
 /* fade-up.vue / 또는 전역 CSS에 */
@@ -64,14 +63,63 @@ html {
   transform: translateY(10px);
 }
 
-
 @keyframes shake-x2 {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+  75% {
+    transform: translateX(-6px);
+  }
 }
 
 .shake {
   animation: shake-x2 0.4s ease;
+}
+
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* 기본 스타일 */
+.p-scrolltop {
+  bottom: 100px !important;
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  width: 48px !important;
+  height: 48px !important;
+  right: 1.5rem !important;
+
+  /* ✅ 트랜지션 추가 */
+  transition: all 200ms ease-in-out !important;
+}
+
+/* 아이콘 색상 */
+.p-scrolltop .p-button-icon {
+  color: white !important;
+}
+
+/* md 이상일 때만 적용 */
+@media (min-width: 768px) {
+  .p-scrolltop {
+    right: 2rem !important;
+    bottom: 2rem !important;
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .p-scrolltop .p-button-icon {
+    font-size: 1.75rem !important;
+  }
 }

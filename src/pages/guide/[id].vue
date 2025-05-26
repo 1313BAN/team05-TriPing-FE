@@ -18,7 +18,7 @@
 
         <div
           ref="tabScrollRef"
-          class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-none px-1 -mx-1 pl-10 pr-10"
+          class="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-none px-1 -mx-1 md:pl-10 md:pr-10"
         >
           <button
             v-for="tab in tabs"
@@ -86,8 +86,6 @@
       </template>
     </Card>
 
-    <div class="border-t-2 border-gray-200" v-if="hasBasicInfo"></div>
-
     <!-- 상세 정보 -->
     <Card
       id="info"
@@ -101,8 +99,6 @@
       </template>
     </Card>
 
-    <div class="border-t-2 border-gray-200"></div>
-
     <Card
       id="tip"
       class="scroll-mt-24 md:shadow-sm md:border-gray-100 md:border-1 border-0 shadow-none"
@@ -114,8 +110,6 @@
         </ul>
       </template>
     </Card>
-
-    <div class="border-t-2 border-gray-200"></div>
 
     <Card
       id="history"
@@ -129,8 +123,6 @@
       </template>
     </Card>
 
-    <div class="border-t-2 border-gray-200"></div>
-
     <Card
       id="photospot"
       v-if="guide.photoSpots?.length"
@@ -143,8 +135,6 @@
         </ul>
       </template>
     </Card>
-
-    <div class="border-t-2 border-gray-200"></div>
 
     <Card
       id="restaurants"
@@ -196,8 +186,6 @@
         </div>
       </template>
     </Card>
-
-    <div class="border-t-2 border-gray-200"></div>
 
     <Card
       id="amenities"
