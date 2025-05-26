@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useLocationStore } from '@/stores/locationStore'
@@ -68,6 +68,11 @@ watch(enteredSub, (sub) => {
 })
 
 onMounted(() => {
+  // 페이지 진입 시 추천 드로어 상태 초기화
+  if (isRecommendDrawerOpen.value) {
+    uiStore.closeRecommendDrawer() // 또는 적절한 메소드명
+  }
+
   if (window.naver && lat.value && lng.value) {
     initMap()
   }
@@ -89,6 +94,13 @@ onMounted(() => {
         'sub'
       )
     }
+  }
+})
+
+// 페이지를 떠날 때도 상태 정리
+onUnmounted(() => {
+  if (isRecommendDrawerOpen.value) {
+    uiStore.closeRecommendDrawer()
   }
 })
 </script>
