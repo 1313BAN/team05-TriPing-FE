@@ -93,7 +93,7 @@
               <Button
                 label="AI 가이드 확인하기"
                 class="btn-primary w-[80%] mx-auto md:text-lg text-base"
-                @click="onSubGuideClick"
+                @click="onSubGuideClick(attractionTitle)"
               ></Button>
               <!-- 관광지 정보 버튼 없음 -->
             </div>
@@ -154,9 +154,17 @@ function onGuideClick(title) {
 }
 
 function onSubGuideClick(title) {
-  router.push(`/guide/${attractionId.value}/${enteredSubAttractionId.value}`)
-  console.log(`${title}의 서브 가이드 클릭`)
+  const sub = subAttractions.value.find(
+    (s) => s.no === enteredSubAttractionId.value
+  )
+  const subtitle = sub?.title || ''
+  router.push({
+    path: `/guide/${attractionId.value}/${enteredSubAttractionId.value}`,
+    query: { title: title, subtitle: subtitle }
+  })
+  console.log(`${subtitle} 서브가이드 클릭`)
 }
+
 
 function onInfoClick() {
   if (!attractionId.value) return
