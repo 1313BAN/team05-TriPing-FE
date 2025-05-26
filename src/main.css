@@ -83,6 +83,47 @@ html {
   animation: shake-x2 0.4s ease;
 }
 
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* 기본 스타일 */
+.p-scrolltop {
+  bottom: 100px !important;
+  background-color: var(--color-primary) !important;
+  border: none !important;
+  width: 48px !important;
+  height: 48px !important;
+  right: 1.5rem !important;
+
+  /* ✅ 트랜지션 추가 */
+  transition: all 200ms ease-in-out !important;
+}
+
+/* 아이콘 색상 */
+.p-scrolltop .p-button-icon {
+  color: white !important;
+}
+
+/* md 이상일 때만 적용 */
+@media (min-width: 768px) {
+  .p-scrolltop {
+    right: 2rem !important;
+    bottom: 2rem !important;
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  .p-scrolltop .p-button-icon {
+    font-size: 1.75rem !important;
+  }
+}
+
 .p-paginator-page.p-paginator-page-selected {
   @apply bg-transparent font-semibold text-primary;
 }
