@@ -28,15 +28,18 @@
 
             <!-- 오른쪽: 평가 정보 -->
             <div class="flex items-center gap-2 text-sm text-gray-700 relative">
-              <PreferenceButton
+              <Button
                 :label="log.preference != null ? '평점 수정' : '평점 남기기'"
                 @click="$emit('preference-click', log)"
-                class="relative"
-              />
-              <span
+                :class="[
+                  'relative transition-none text-xs',
+                  log.preference != null ? 'btn-white-outline' : 'btn-primary'
+                ]"
+              ></Button>
+              <!-- <span
                 v-if="log.preference == null"
-                class="absolute -top-1 -right-1 w-2.5 h-2 rounded-full bg-red-500"
-              ></span>
+                class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500"
+              ></span> -->
             </div>
           </div>
         </div>
@@ -56,7 +59,6 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import PreferenceButton from './PreferenceButton.vue'
 
 defineProps({
   logs: {

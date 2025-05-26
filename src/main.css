@@ -16,8 +16,12 @@ html {
   @apply bg-primary text-white px-4 py-2 rounded-md border-0 hover:opacity-90 cursor-pointer;
 }
 
-.btn-sub {
+.btn-white-outline {
   @apply text-gray-700 border border-gray-400 bg-transparent px-4 py-2 rounded-md hover:bg-gray-700 hover:text-white cursor-pointer;
+}
+
+.btn-dark {
+  @apply bg-gray-700 text-white px-4 py-2 rounded-md border border-gray-700 hover:bg-gray-700/90 cursor-pointer;
 }
 
 .btn-small {
