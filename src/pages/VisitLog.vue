@@ -32,14 +32,21 @@
     </div>
 
     <VisitMap :logs="logs" />
+    <div v-if="visitSummary" class="text-center my-6 px-4">
+  <p class="text-base md:text-lg font-medium text-gray-700">
+    {{ visitSummary }}
+  </p>
+</div>
+
     <VisitLogList :logs="logs" @preference-click="handlePreferenceClick" />
     <VisitPrefModal
-      :visible="visitPrefVisible"
-      :visit-log-id="visitPrefId"
-      :title="visitPrefTitle"
-      @update:visible="visitPrefVisible = $event"
-      @submit="handlePrefSubmit"
-    />
+  :visible="visitPrefVisible"
+  :visit-log-id="visitPrefId"
+  :title="visitPrefTitle"
+  :initial-score="visitPrefScore"
+  @update:visible="visitPrefVisible = $event"
+  @submit="handlePrefSubmit"
+/>
 
     <!-- 하단 페이지네이션 -->
     <div class="flex justify-center mt-10 md:mb-0 mb-12">
@@ -52,7 +59,7 @@
 import Button from 'primevue/button'
 import Paginator from 'primevue/paginator'
 import VisitLogList from '@/components/visitLog/VisitLogList.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, nextTick } from 'vue'
 import { getMyVisitLog } from '@/api/visitLog'
 import VisitPrefModal from '@/components/visitLog/VisitPrefModal.vue'
 import { useVisitPrefController } from '@/composables/visit/useVisitPrefController'
@@ -72,16 +79,25 @@ const totalCount = ref(0)
 const visitPrefVisible = ref(false)
 const visitPrefId = ref(null)
 const visitPrefTitle = ref('')
+const visitPrefScore = ref(null)
 
 const fetchLogs = async () => {
   try {
     const res = await getMyVisitLog(page.value)
     logs.value = res.data.visitLogs.reverse()
     totalCount.value = res.data.totalCount
+    await nextTick()
+    window.scrollTo({ top: 0, behavior: 'auto' })
   } catch (err) {
     console.error('방문기록 불러오기 실패:', err)
   }
 }
+
+const visitSummary = computed(() => {
+  const count = logs.value.length
+  return count > 0 ? `총 ${count}개의 관광지를 방문했어요.` : ''
+})
+
 
 onMounted(fetchLogs)
 
@@ -107,12 +123,13 @@ const goToNextPage = () => {
 const handlePreferenceClick = (log) => {
   visitPrefId.value = log.visitLogId
   visitPrefTitle.value = log.title
+  visitPrefScore.value = log.preference ?? null
   visitPrefVisible.value = true
 }
 const { handleSubmit: handlePrefSubmit } = useVisitPrefController(
   visitPrefVisible,
   visitPrefId,
   visitPrefTitle,
-  fetchLogs // ✅ 필요 시 최신 데이터 다시 불러오기
+  fetchLogs
 )
 </script>

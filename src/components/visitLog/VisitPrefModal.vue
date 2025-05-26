@@ -27,43 +27,47 @@
             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
         ]"
         @click="selectScore(score)"
-      ></Button>
+      />
     </div>
-
     <div class="w-full flex gap-2">
       <Button
-        label="나중에 하기"
-        class="w-1/2 bg-gray-600 text-white hover:bg-gray-600/90 transition-none border-0"
-        @click="close"
-      ></Button>
+    :label="isUpdate ? '닫기' : '나중에 하기'"
+    class="w-1/2 bg-gray-600 text-white hover:bg-gray-600/90 transition-none border-0"
+    @click="close"
+    />
       <Button
-        label="제출하기"
-        class="w-1/2 btn-primary"
-        :disabled="selectedScore === null"
-        @click="submit"
-      ></Button>
+    :label="isUpdate ? '수정하기' : '제출하기'"
+    class="w-1/2 btn-primary"
+    :disabled="selectedScore === null"
+    @click="submit"
+    />
     </div>
+
   </Dialog>
 </template>
 
 <script setup>
-import { ref, watch, defineEmits, defineProps } from 'vue'
+import { ref, watch, defineEmits, defineProps, computed } from 'vue'
 
 const props = defineProps({
   visitLogId: { type: Number, required: true },
   title: { type: String, required: true },
-  visible: { type: Boolean, required: true }
+  visible: { type: Boolean, required: true },
+  initialScore: { type: Number, default: null }
 })
 
 const emit = defineEmits(['update:visible', 'submit'])
 
 const selectedScore = ref(null)
 
-// visible 상태가 변경될 때 selectedScore 초기화
+const isUpdate = computed(() => props.initialScore !== null)
+
 watch(
   () => props.visible,
   (newVal) => {
-    if (!newVal) {
+    if (newVal) {
+      selectedScore.value = props.initialScore
+    } else {
       selectedScore.value = null
     }
   }
@@ -78,7 +82,6 @@ function selectScore(score) {
 }
 
 function submit() {
-  console.log('[🟢 제출 전 visitLogId 확인]', props.visitLogId)
   emit('submit', {
     visitLogId: props.visitLogId,
     score: selectedScore.value
@@ -91,4 +94,5 @@ function close() {
   emit('update:visible', false)
   selectedScore.value = null
 }
+
 </script>

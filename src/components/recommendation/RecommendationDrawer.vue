@@ -1,29 +1,39 @@
 <template>
   <transition name="slide" appear>
-    <div v-if="visible" class="absolute inset-0 z-[9999] flex flex-col justify-end">
-      <!-- 오버레이 -->
-      <div class="flex-1" @click.self="closeDrawer"></div>
-
+    <div v-if="visible" class="absolute bottom-0 left-0 right-0 z-[9999]">
       <!-- Drawer -->
       <div
-        class="bg-white rounded-t-2xl w-full h-[300px] p-6 text-center"
+        class="bg-white rounded-t-2xl w-full h-[300px] flex flex-col justify-between text-center relative px-6 py-4"
         style="
           box-shadow:
             0 -4px 6px -1px rgba(0, 0, 0, 0.1),
             0 -2px 4px -2px rgba(0, 0, 0, 0.1);
         "
       >
-        <h2 class="text-xl font-bold mb-3">AI 관광지 추천</h2>
-        <p class="text-gray-600 leading-relaxed mb-6">
-          현재 위치와 방문 기록을 바탕으로<br />
-          지금 가장 적합한 관광지를 AI가 분석하여 추천해드립니다.
-        </p>
-        <Button
-          label="추천받기"
-          class="btn-primary w-[80%] mx-auto"
-          @click="recommend"
-          :loading="loading"
-        ></Button>
+        <!-- 텍스트 영역 -->
+        <div class="flex-1 flex flex-col justify-center">
+          <h2 class="md:text-2xl text-xl font-bold">AI 관광지 추천</h2>
+<p class="text-gray-600 leading-relaxed md:text-base text-sm mt-3">
+  현재 위치와 방문 이력을 분석했어요 🤖<br />
+  다음 행선지는 <strong class="font-semibold">AI가 추천하는 곳</strong>으로 떠나보세요!<br />
+</p>
+        </div>
+
+        <!-- 버튼 영역 -->
+        <div class="flex flex-col items-center gap-3 pb-4">
+          <Button
+            label="시작하기"
+            class="btn-primary w-[80%] md:text-lg text-base"
+            @click="recommend"
+            :loading="loading"
+          ></Button>
+          <Button
+            label="닫기"
+            severity="secondary"
+            class="w-[80%] md:text-lg text-base"
+            @click="closeDrawer"
+          ></Button>
+        </div>
       </div>
     </div>
   </transition>
@@ -59,23 +69,3 @@ const closeDrawer = () => {
   uiStore.closeRecommendDrawer()
 }
 </script>
-
-<style scoped>
-/* 슬라이드 업/다운 애니메이션 */
-.slide-enter-from {
-  transform: translateY(100%);
-}
-.slide-enter-to {
-  transform: translateY(0%);
-}
-.slide-leave-from {
-  transform: translateY(0%);
-}
-.slide-leave-to {
-  transform: translateY(100%);
-}
-.slide-enter-active,
-.slide-leave-active {
-  transition: transform 0.3s ease-in-out;
-}
-</style>

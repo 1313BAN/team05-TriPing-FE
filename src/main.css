@@ -136,3 +136,48 @@ html {
 .p-paginator-page.p-paginator-page-selected {
   @apply bg-transparent font-semibold text-primary;
 }
+
+
+.slide-enter-from {
+  transform: translateY(100%);
+}
+.slide-enter-to {
+  transform: translateY(0%);
+}
+.slide-leave-from {
+  transform: translateY(0%);
+}
+.slide-leave-to {
+  transform: translateY(100%);
+}
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+
+.translate-x-0 {
+  transform: translateX(0%);
+}
+.translate-x-full {
+  transform: translateX(100%);
+}
+.-translate-x-full {
+  transform: translateX(-100%);
+}
+
+.manual-left > div:first-child {
+  transform: translateX(0%);
+}
+.manual-left > div:last-child {
+  transform: translateX(100%);
+}
+.manual-right > div:first-child {
+  transform: translateX(-100%);
+}
+.manual-right > div:last-child {
+  transform: translateX(0%);
+}
+.relative > div {
+  transition: transform 0.3s ease-in-out;
+}

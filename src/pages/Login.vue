@@ -1,7 +1,11 @@
 <template>
   <div class="h-full flex items-center justify-center">
     <div class="w-full max-w-sm p-6 bg-white rounded-lg">
-      <h2 class="text-2xl font-bold text-center mb-6">로그인</h2>
+      <!-- 제목 + 설명 -->
+      <h2 class="text-2xl font-bold text-center mb-2">더 편한 여행을 원하시나요?</h2>
+      <p class="text-gray-500 text-center mb-10">
+        자동으로 안내하고, 기록하는 스마트 여행 서비스
+      </p>
 
       <!-- 이메일 입력 -->
       <div class="mb-4">
