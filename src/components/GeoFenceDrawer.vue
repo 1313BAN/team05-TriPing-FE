@@ -18,19 +18,24 @@
           class="absolute w-full h-full transition-transform duration-300"
           :class="{ 'translate-x-0': !currentSlideState, '-translate-x-full': currentSlideState }"
         >
-        <!-- 오른쪽 이동 버튼 (메인 관광지 화면에서 서브 관광지가 있을 때만) -->
-        <button
-          v-if="hasSubAttraction && !currentSlideState"
-          class="absolute md:right-2 right-1 md:p-2 top-1/2 -translate-y-1/2 z-10 p-0 rounded-full hover:cursor-pointer"
-          @click="slideToSub"
-        >
-          <i class="pi pi-angle-right text-3xl text-gray-700"></i>
-        </button>
+          <!-- 오른쪽 이동 버튼 (메인 관광지 화면에서 서브 관광지가 있을 때만) -->
+          <button
+            v-if="hasSubAttraction && !currentSlideState"
+            class="absolute md:right-2 right-1 md:p-2 top-1/2 -translate-y-1/2 z-10 p-0 rounded-full hover:cursor-pointer"
+            @click="slideToSub"
+          >
+            <i class="pi pi-angle-right text-3xl text-gray-700"></i>
+          </button>
           <div class="flex flex-col h-full items-center">
             <div class="flex-1 flex flex-col items-center justify-center w-full">
-              <h2 class="md:text-2xl text-xl font-bold text-center">{{ attractionTitle }} 안에 있어요</h2>
-              <p class="md:text-lg text-base font-normal text-center text-gray-500 mt-4">처음 왔다면 꼭 봐야 해요!<br class="block md:hidden" />
-                AI가 정리한 <strong class="font-semibold">{{ attractionTitle }}</strong> 핵심 가이드 🗺️</p>
+              <h2 class="md:text-2xl text-xl font-bold text-center">
+                {{ attractionTitle }} 안에 있어요
+              </h2>
+              <p class="md:text-lg text-base font-normal text-center text-gray-500 mt-4">
+                처음 왔다면 꼭 봐야 해요!<br class="block md:hidden" />
+                AI가 정리한 <strong class="font-semibold">{{ attractionTitle }}</strong> 핵심 가이드
+                🗺️
+              </p>
             </div>
             <div class="flex flex-col w-full justify-around px-4 gap-5 pb-6">
               <Button
@@ -53,15 +58,14 @@
           class="absolute w-full h-full transition-transform duration-300"
           :class="{ 'translate-x-full': !currentSlideState, 'translate-x-0': currentSlideState }"
         >
-
-        <!-- 왼쪽 이동 버튼 (서브 관광지 화면에서만) -->
-        <button
-          v-if="currentSlideState"
-          class="absolute md:left-2 left-1 top-1/2 -translate-y-1/2 z-10 md:p-2 p-0 rounded-full hover:cursor-pointer"
-          @click="slideToMain"
-        >
-          <i class="pi pi-angle-left text-3xl text-gray-700"></i>
-        </button>
+          <!-- 왼쪽 이동 버튼 (서브 관광지 화면에서만) -->
+          <button
+            v-if="currentSlideState"
+            class="absolute md:left-2 left-1 top-1/2 -translate-y-1/2 z-10 md:p-2 p-0 rounded-full hover:cursor-pointer"
+            @click="slideToMain"
+          >
+            <i class="pi pi-angle-left text-3xl text-gray-700"></i>
+          </button>
           <div class="flex flex-col h-full items-center">
             <div
               class="flex-1 flex flex-col items-center justify-center w-full transition-opacity duration-0"
@@ -75,18 +79,21 @@
                 {{ subAttractionTitle }} 근처에 도착했어요
               </h2>
               <p class="text-base md:text-lg font-normal text-center text-gray-500 mt-8 mb-2">
-  {{ attractionTitle }} 탐방은 즐거우신가요?</p>
+                {{ attractionTitle }} 탐방은 즐거우신가요?
+              </p>
               <p class="text-base md:text-lg font-normal text-center text-gray-500 mb-4">
-  AI가 들려주는 <br class="block md:hidden" /><strong class="font-semibold">{{ subAttractionTitle }}</strong>의 이야기를 확인해보세요! 
-</p>
-
+                AI가 들려주는 <br class="block md:hidden" /><strong class="font-semibold">{{
+                  subAttractionTitle
+                }}</strong
+                >의 이야기를 확인해보세요!
+              </p>
             </div>
 
             <div class="flex flex-col w-full justify-around px-4 gap-5 pb-6">
               <Button
                 label="AI 가이드 확인하기"
                 class="btn-primary w-[80%] mx-auto md:text-lg text-base"
-                @click="onGuideClick(subAttractionTitle)"
+                @click="onSubGuideClick"
               ></Button>
               <!-- 관광지 정보 버튼 없음 -->
             </div>
@@ -146,6 +153,11 @@ function onGuideClick(title) {
   console.log(`${title} 가이드 클릭`)
 }
 
+function onSubGuideClick(title) {
+  router.push(`/guide/${attractionId.value}/${enteredSubAttractionId.value}`)
+  console.log(`${title}의 서브 가이드 클릭`)
+}
+
 function onInfoClick() {
   if (!attractionId.value) return
   router.push(`/attraction/${attractionId.value}`)
@@ -162,7 +174,6 @@ function slideToSub() {
   manualSlideClass.value = 'manual-right'
   setTimeout(() => (manualSlideClass.value = ''), 300)
 }
-
 </script>
 
 <style scoped>
@@ -209,5 +220,4 @@ function slideToSub() {
 .relative > div {
   transition: transform 0.3s ease-in-out;
 }
-
 </style>
