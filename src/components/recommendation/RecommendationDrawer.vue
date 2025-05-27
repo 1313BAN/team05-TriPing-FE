@@ -10,7 +10,7 @@
         style="box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1), 0 -2px 4px -2px rgba(0,0,0,0.1);"
       >
         <div class="overflow-y-auto flex flex-col gap-4 items-center justify-center">
-          <!-- 추천 전 -->
+          <!-- 추천 전 텍스트 -->
           <transition name="fade-smooth">
             <div v-if="!started" class="text-center flex flex-col items-center justify-center w-full">
               <h2 class="md:text-2xl text-xl font-bold">AI 관광지 추천</h2>
@@ -40,7 +40,7 @@
           </transition-group>
         </div>
 
-        <!-- 버튼 영역 -->
+        <!-- 버튼 영역 (닫기 유지) -->
         <div class="flex flex-col items-center gap-3 pt-4">
           <Button
             v-if="!started"
@@ -63,7 +63,7 @@
 import { ref, watch } from 'vue'
 import { useUiStore } from '@/stores/uiStore'
 import { useLocationStore } from '@/stores/locationStore'
-import { fetchRecommendedAttractions } from '@/api/visitLog'
+import { fetchRecommendedAttractions } from '@/api/recommendation'
 import RecommendedCard from './RecommendedCard.vue'
 import RecommendedSkeleton from './RecommendedSkeleton.vue'
 
@@ -77,48 +77,25 @@ const loading = ref(false)
 const started = ref(false)
 
 const recommend = async () => {
-  const mockData = [
-    {
-      id: 57314,
-      title: "정동전망대",
-      address: "서울특별시 중구 덕수궁길 15",
-      latitude: 37.5644099957,
-      longitude: 126.9755269079,
-      imageUrl: "",
-      reason: "예전에 정동전망대에서의 짧은 시간을 즐기셨던 걸 보면, 이곳의 멋진 경치가 또 마음에 드실 것 같아요.",
-      score: 90,
-    },
-    {
-      id: 57034,
-      title: "서울광장",
-      address: "서울특별시 중구 세종대로 110",
-      latitude: 37.5657098894,
-      longitude: 126.978015533,
-      imageUrl: "",
-      reason: "여유로운 공간에서 시간을 보내는 걸 좋아하셨던 것 같아요. 서울광장도 편하게 산책하시기 좋을 거예요.",
-      score: 88,
-    },
-    {
-      id: 57450,
-      title: "환구단",
-      address: "서울특별시 중구 소공로 112",
-      latitude: 37.5651627568,
-      longitude: 126.9794848592,
-      imageUrl: "",
-      reason: "자연과 역사적인 장소에서의 경험을 즐기신 걸 보면, 환구단의 고즈넉한 분위기도 마음에 드실 거예요.",
-      score: 86,
-    },
-  ]
-
   started.value = true
   loading.value = true
   results.value = []
 
   try {
-    await new Promise((r) => setTimeout(r, 1000)) // 사용자 경험용 로딩
-    results.value = mockData
+    const { lat, lng } = locationStore
+
+    // 위치 정보 없을 경우 처리
+    if (!lat || !lng) {
+      console.warn('❗ 위치 정보가 없습니다. 권한이 없거나 초기화되지 않았을 수 있습니다.')
+      results.value = []
+      return
+    }
+
+    const data = await fetchRecommendedAttractions(lat, lng)
+    results.value = data
   } catch (e) {
-    console.error('추천 실패 (모의 데이터):', e)
+    console.error('❌ 추천 실패:', e)
+    results.value = []
   } finally {
     loading.value = false
   }
