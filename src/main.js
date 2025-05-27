@@ -9,7 +9,11 @@ import pinia from './plugins/pinia'
 import router from './plugins/router'
 import PrimeVueComponents from './plugins/primevue'
 
+import { registerSW } from 'virtual:pwa-register'
+
 const app = createApp(App)
+
+registerSW({ immediate: true })
 
 app.config.errorHandler = (err, instance, info) => {
   console.error('[Global Error]', err)
@@ -31,7 +35,7 @@ app.use(PrimeVue, {
 })
 
 app.use(PrimeVueComponents)
-
 app.use(router)
 app.use(pinia)
+
 app.mount('#app')
