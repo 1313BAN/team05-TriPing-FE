@@ -9,6 +9,8 @@
         <RouterLink
           :to="item.path"
           class="flex flex-col items-center justify-center text-gray-400 cursor-pointer"
+          active-class="text-primary"
+          exact-active-class="text-primary"
         >
           <!-- 모바일: 하단 아이콘 -->
           <div class="md:hidden">
