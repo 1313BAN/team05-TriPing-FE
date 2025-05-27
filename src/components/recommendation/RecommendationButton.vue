@@ -12,7 +12,7 @@
     </Button>
   </transition>
 
-  <RecommendationDrawer v-model:visible="showDrawer" />
+  <RecommendationDrawer v-model:visible="showDrawer" @item-click="handleItemClick"/>
 </template>
 
 <script setup>
@@ -27,6 +27,7 @@ const showDrawer = ref(false)
 
 const enteredZoneStore = useEnteredZoneStore()
 const { isEntered } = storeToRefs(enteredZoneStore)
+const emit = defineEmits(['move-to-location'])
 
 const uiStore = useUiStore()
 
@@ -57,6 +58,15 @@ function triggerShakeEffect() {
 function handleClick() {
   showDrawer.value = true
   uiStore.openRecommendDrawer()
+}
+
+const handleItemClick = (locationData) => {
+  console.log('🗺️ 지도 이동 요청:', locationData)
+  
+  // 부모 컴포넌트(DynamicMap)로 위치 정보 전달
+  emit('move-to-location', locationData)
+  showDrawer.value = false
+  uiStore.closeRecommendDrawer()  // ✅ 추가
 }
 
 watch(visible, (newVal) => {

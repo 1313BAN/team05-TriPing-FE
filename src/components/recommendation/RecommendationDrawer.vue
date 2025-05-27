@@ -68,7 +68,7 @@ import RecommendedCard from './RecommendedCard.vue'
 import RecommendedSkeleton from './RecommendedSkeleton.vue'
 
 const props = defineProps({ visible: Boolean })
-const emit = defineEmits(['update:visible'])
+const emit = defineEmits(['update:visible', 'item-click'])
 
 const uiStore = useUiStore()
 const locationStore = useLocationStore()
@@ -77,26 +77,53 @@ const loading = ref(false)
 const started = ref(false)
 
 const recommend = async () => {
-  const { lat, lng } = locationStore
-  if (lat == null || lng == null) return
+  const mockData = [
+    {
+      id: 57314,
+      title: "정동전망대",
+      address: "서울특별시 중구 덕수궁길 15",
+      latitude: 37.5644099957,
+      longitude: 126.9755269079,
+      imageUrl: "",
+      reason: "예전에 정동전망대에서의 짧은 시간을 즐기셨던 걸 보면, 이곳의 멋진 경치가 또 마음에 드실 것 같아요.",
+      score: 90,
+    },
+    {
+      id: 57034,
+      title: "서울광장",
+      address: "서울특별시 중구 세종대로 110",
+      latitude: 37.5657098894,
+      longitude: 126.978015533,
+      imageUrl: "",
+      reason: "여유로운 공간에서 시간을 보내는 걸 좋아하셨던 것 같아요. 서울광장도 편하게 산책하시기 좋을 거예요.",
+      score: 88,
+    },
+    {
+      id: 57450,
+      title: "환구단",
+      address: "서울특별시 중구 소공로 112",
+      latitude: 37.5651627568,
+      longitude: 126.9794848592,
+      imageUrl: "",
+      reason: "자연과 역사적인 장소에서의 경험을 즐기신 걸 보면, 환구단의 고즈넉한 분위기도 마음에 드실 거예요.",
+      score: 86,
+    },
+  ]
 
   started.value = true
   loading.value = true
   results.value = []
 
   try {
-    const data = await fetchRecommendedAttractions(lat, lng)
-    await new Promise((r) => setTimeout(r, 1200))
-    results.value = data.map((item) => ({
-      ...item,
-      score: Math.round(item.score)
-    }))
+    await new Promise((r) => setTimeout(r, 1000)) // 사용자 경험용 로딩
+    results.value = mockData
   } catch (e) {
-    console.error('추천 실패:', e)
+    console.error('추천 실패 (모의 데이터):', e)
   } finally {
     loading.value = false
   }
 }
+
 
 const closeDrawer = () => {
   emit('update:visible', false)
@@ -105,6 +132,7 @@ const closeDrawer = () => {
 
 const onItemClick = (item) => {
   console.log('🔍 클릭된 장소:', item)
+  emit('item-click', item)
   // TODO: 추천 상세 페이지 or 지도 마커 이동 등
 }
 
