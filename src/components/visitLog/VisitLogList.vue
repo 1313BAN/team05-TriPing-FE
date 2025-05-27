@@ -6,7 +6,7 @@
         <!-- 카드 -->
         <div class="border border-gray-200 rounded-2xl shadow-sm p-5 bg-white">
           <!-- 방문 시간 -->
-          <div class="text-base text-gray-500 mb-2">
+          <div class="text-xs text-gray-500 mb-2">
             {{ formatTime(log.enteredAt) }} ~ {{ formatTime(log.exitedAt) }} ({{
               getStayDurationText(log.enteredAt, log.exitedAt)
             }})
@@ -21,13 +21,13 @@
               >
                 {{ index + 1 }}
               </div>
-              <div class="text-lg font-semibold text-gray-800">
+              <div class="text-sm md:text-lg font-semibold text-gray-800">
                 {{ log.title }}
               </div>
             </div>
 
             <!-- 오른쪽: 평가 정보 -->
-            <div class="flex items-center gap-2 text-sm text-gray-700 relative">
+            <div class="flex items-center gap-2 md:text-sm text-xs text-gray-700 relative">
               <Button
                 :label="log.preference != null ? '평점 수정' : '평점 남기기'"
                 @click="$emit('preference-click', log)"

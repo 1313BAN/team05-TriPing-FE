@@ -32,10 +32,10 @@
       </div>
 
       <!-- 자동 로그인 -->
-      <div class="mb-4 flex items-center">
+      <!-- <div class="mb-4 flex items-center">
         <Checkbox v-model="rememberMe" :binary="true" inputId="remember" />
         <label for="remember" class="ml-2 text-sm text-gray-600">자동 로그인</label>
-      </div>
+      </div> -->
 
       <!-- 로그인 실패 메시지 -->
       <div v-if="loginFailMessage" class="text-red-500 text-sm mb-4 text-center">
@@ -47,7 +47,12 @@
 
       <!-- 하단 링크 -->
       <div class="flex justify-between text-sm mt-4 text-blue-600">
-        <a href="#" class="hover:underline">비밀번호 찾기</a>
+        <a
+          href="#"
+          class="pointer-events-none text-gray-400 hover:underline opacity-0 cursor-default"
+        >
+          비밀번호 찾기
+        </a>
         <RouterLink to="/signup" class="hover:underline">회원가입</RouterLink>
       </div>
     </div>
@@ -59,10 +64,10 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
-import Checkbox from 'primevue/checkbox'
+// import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { RouterLink } from 'vue-router'
-import { login } from '@/api/auth' // ✅ auth.js에서 import
+import { login } from '@/api/auth'
 import { getMyInfo } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 
@@ -88,6 +93,7 @@ const handleLogin = async () => {
     const response = await login(email.value, password.value)
 
     const authHeader = response.headers['authorization'] || response.headers['Authorization']
+
     if (response.status === 200 && authHeader) {
       const token = authHeader.replace('Bearer ', '')
 
@@ -97,10 +103,13 @@ const handleLogin = async () => {
 
       router.push('/')
     } else {
-      loginFailMessage.value = '이메일 또는 비밀번호가 올바르지 않습니다.'
+      // 상태 코드가 200이 아니면 message 표시
+      loginFailMessage.value = response.data?.message || '로그인에 실패했습니다.'
     }
   } catch (error) {
-    loginFailMessage.value = '서버 오류가 발생했습니다.'
+    // 서버에서 에러 메시지를 보내는 경우 처리
+    const serverMessage = error.response?.data?.message
+    loginFailMessage.value = serverMessage || '서버 오류가 발생했습니다.'
   }
 }
 

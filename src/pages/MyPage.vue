@@ -9,6 +9,7 @@
         rounded
         text
         @click="logout"
+        class="md:text-base text-sm"
         aria-label="로그아웃"
       />
     </div>

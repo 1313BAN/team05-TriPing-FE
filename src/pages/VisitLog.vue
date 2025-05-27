@@ -50,8 +50,36 @@
 
     <!-- 하단 페이지네이션 -->
     <div class="flex justify-center mt-10 md:mb-0 mb-12">
-      <Paginator :rows="1" :totalRecords="totalCount" :first="page - 1" @page="onPageChange" />
-    </div>
+    <!-- 데스크탑용 풀 페이지네이션 -->
+    <Paginator 
+      :rows="1" 
+      :totalRecords="totalCount" 
+      :first="page - 1" 
+      @page="onPageChange"
+      class="hidden md:block"
+    />
+    
+    <!-- 모바일용 간단 네비게이션 -->
+      <div class="flex items-center gap-4 md:hidden">
+    <Button
+      icon="pi pi-chevron-left"
+      class="border-0 text-primary bg-transparent hover:none hover:text-primary hover:bg-transparent focus:border-primary focus:text-primary focus:bg-transparent active:border-primary active:text-primary active:bg-transparent transition-none p-2"
+      :disabled="page <= 1"
+      @click="goToPrevPage"
+    />
+    
+    <span class="text-sm font-medium">
+      {{ page }} / {{ totalCount }}
+    </span>
+    
+    <Button
+      icon="pi pi-chevron-right"
+      class="border-0 text-primary bg-transparent hover:border-primary hover:text-primary hover:bg-transparent focus:border-primary focus:text-primary focus:bg-transparent active:border-primary active:text-primary active:bg-transparent transition-none p-2"
+      :disabled="page >= totalCount"
+      @click="goToNextPage"
+    />
+  </div>
+  </div>
   </div>
 </template>
 

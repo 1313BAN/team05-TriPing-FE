@@ -200,3 +200,58 @@ html {
   transform: translateY(0);
 }
 
+:deep(.custom-paginator) {
+  /* 전체 컨테이너 */
+  .p-paginator {
+    flex-wrap: nowrap !important;
+    gap: 0.25rem !important;
+  }
+  
+  /* 버튼들 크기 조정 */
+  .p-paginator-page,
+  .p-paginator-next,
+  .p-paginator-prev,
+  .p-paginator-first,
+  .p-paginator-last {
+    min-width: 2rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    font-size: 0.875rem !important;
+    padding: 0 !important;
+  }
+  
+  /* 페이지 정보 텍스트 숨기기 (모바일) */
+  @media (max-width: 768px) {
+    .p-paginator-current {
+      display: none !important;
+    }
+  }
+}
+
+:deep(.custom-nav-btn) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  background: transparent !important;
+}
+
+:deep(.custom-nav-btn:hover) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.custom-nav-btn:focus) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:deep(.custom-nav-btn:active) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  background: transparent !important;
+  transform: none !important;
+}
