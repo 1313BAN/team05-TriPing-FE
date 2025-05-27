@@ -16,7 +16,7 @@
               <h2 class="md:text-2xl text-xl font-bold">AI 관광지 추천</h2>
               <p class="text-gray-600 leading-relaxed md:text-base text-sm mt-3">
                 현재 위치와 방문 이력을 분석했어요 🤖<br />
-                다음 허산지는 <strong class="font-semibold">AI가 추천하는 곳</strong>으로 떠나보세요!
+                다음 행선지는 <strong class="font-semibold">AI가 추천하는 곳</strong>으로 떠나보세요!
               </p>
             </div>
           </transition>

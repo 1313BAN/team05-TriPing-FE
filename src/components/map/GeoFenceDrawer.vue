@@ -45,8 +45,7 @@
               ></Button>
               <Button
                 label="관광지 정보 보기"
-                severity="secondary"
-                class="w-[80%] mx-auto md:text-lg text-base"
+                class="btn-dark w-[80%] mx-auto md:text-lg text-base"
                 @click="onInfoClick"
               ></Button>
             </div>

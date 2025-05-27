@@ -23,7 +23,7 @@ export const useEnteredZoneStore = defineStore(
         let bufferedPolygon = parsed
         try {
           const polygonFeature = feature(parsed)
-          const buffered = buffer(polygonFeature, 7, { units: 'meters' })
+          const buffered = buffer(polygonFeature, 10, { units: 'meters' })
           bufferedPolygon = buffered.geometry
         } catch (e) {
           console.warn(`폴리곤 buffer 실패 (${sub.title}):`, e)

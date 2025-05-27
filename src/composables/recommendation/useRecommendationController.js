@@ -99,43 +99,43 @@ export function useRecommendationController(mapRef, latRef, lngRef) {
 
   let animationFrameId = null
 
-  const updateRouteLineIfNeeded = (newLat, newLng) => {
-    if (!isNavigating.value || !routeLine.value || !recommendationMarker.value) return
+const updateRouteLineIfNeeded = (newLat, newLng) => {
+  if (!isNavigating.value || !routeLine.value || !recommendationMarker.value) return
 
-    const destination = recommendationMarker.value.getPosition()
-    const oldPos = routeLine.value.getPath().getAt(0)
-    const newPos = new naver.maps.LatLng(newLat, newLng)
+  const destination = recommendationMarker.value.getPosition()
+  const oldPos = routeLine.value.getPath().getAt(0)
+  const newPos = new naver.maps.LatLng(newLat, newLng)
 
-    if (!oldPos) return
+  if (!oldPos) return
 
-    let progress = 0
-    const duration = 300 // ms
-    const frameRate = 60
-    const frameCount = (duration / 1000) * frameRate
+  let progress = 0
+  const duration = 300 // ms
+  const frameRate = 60
+  const frameCount = (duration / 1000) * frameRate
 
-    const deltaLat = (newPos.lat() - oldPos.lat()) / frameCount
-    const deltaLng = (newPos.lng() - oldPos.lng()) / frameCount
+  const deltaLat = (newPos.lat() - oldPos.lat()) / frameCount
+  const deltaLng = (newPos.lng() - oldPos.lng()) / frameCount
 
-    const animate = () => {
-      if (progress >= frameCount) {
-        cancelAnimationFrame(animationFrameId)
-        routeLine.value.setPath([newPos, destination])
-        return
-      }
-
-      const intermediate = new naver.maps.LatLng(
-        oldPos.lat() + deltaLat * progress,
-        oldPos.lng() + deltaLng * progress
-      )
-
-      routeLine.value.setPath([intermediate, destination])
-      progress++
-      animationFrameId = requestAnimationFrame(animate)
+  const animate = () => {
+    if (progress >= frameCount) {
+      cancelAnimationFrame(animationFrameId)
+      routeLine.value.setPath([newPos, destination])
+      return
     }
 
-    cancelAnimationFrame(animationFrameId) // 이전 애니메이션 중단
-    animate()
+    const intermediate = new naver.maps.LatLng(
+      oldPos.lat() + deltaLat * progress,
+      oldPos.lng() + deltaLng * progress
+    )
+
+    routeLine.value.setPath([intermediate, destination])
+    progress++
+    animationFrameId = requestAnimationFrame(animate)
   }
+
+  cancelAnimationFrame(animationFrameId) // 이전 애니메이션 중단
+  animate()
+}
 
   return {
     moveToLocation,
