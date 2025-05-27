@@ -150,7 +150,7 @@ async function fetchSubGuide(title, subtitle) {
     const start = Date.now()
 
     const res = await fetch(
-      `http://localhost:8080/attraction/subguide?title=${encodeURIComponent(title)}&subTitle=${encodeURIComponent(subtitle)}`
+      `https://tri-ping.site/attraction/subguide?title=${encodeURIComponent(title)}&subTitle=${encodeURIComponent(subtitle)}`
     )
     if (!res.ok) throw new Error('서브 가이드 API 호출 실패')
     const data = await res.json()

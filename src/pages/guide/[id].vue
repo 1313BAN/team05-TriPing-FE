@@ -355,7 +355,7 @@ const visitedStore = useVisitedGuideStore()
 async function fetchGuide(id) {
   const start = Date.now()
   try {
-    const res = await fetch(`http://localhost:8080/attraction/guide/${id}`)
+    const res = await fetch(`https://tri-ping.site/attraction/guide/${id}`)
     if (!res.ok) throw new Error('가이드 API 호출 실패')
     const data = await res.json()
 
