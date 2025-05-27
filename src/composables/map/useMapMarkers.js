@@ -1,7 +1,6 @@
 // useMapMarkers.js
 import { getMarkersInViewport } from '@/api/attraction'
 
-
 let selectedMarkerSet = null
 let skipNextClickClear = false
 let dragInProgress = false
@@ -49,8 +48,8 @@ export function renderMarkersOnMap(data, map, myMarker, router) {
           top: 100%;
           margin-top: 8px;
           width: 72px;
-          transform: translateX(-50%);
           left: 50%;
+          transform: translateX(-50%);
           background-color: #e85f5c;
           color: white;
           border: none;
@@ -64,13 +63,27 @@ export function renderMarkersOnMap(data, map, myMarker, router) {
       </div>
     `
 
+    // 컨테이너를 임시로 DOM에 추가하여 실제 너비 측정
+    const tempContainer = document.createElement('div')
+    tempContainer.style.position = 'absolute'
+    tempContainer.style.visibility = 'hidden'
+    tempContainer.style.top = '-9999px'
+    tempContainer.appendChild(content.cloneNode(true))
+    document.body.appendChild(tempContainer)
+
+    const containerWidth = tempContainer.offsetWidth
+    const anchorX = containerWidth / 2
+
+    document.body.removeChild(tempContainer)
+
     const marker = new naver.maps.Marker({
       position: new naver.maps.LatLng(item.latitude, item.longitude),
       map,
       icon: {
         content,
-        anchor: new naver.maps.Point(14, 28),
-        size: new naver.maps.Size(28, 28)
+        // X값을 컨테이너 중앙으로, Y값은 마커 아이콘 하단(28px)으로 설정
+        anchor: new naver.maps.Point(anchorX, 28),
+        size: new naver.maps.Size(containerWidth, 70)
       },
       zIndex: 1000 - index,
       clickable: true
@@ -84,7 +97,6 @@ export function renderMarkersOnMap(data, map, myMarker, router) {
       event.stopPropagation()
       router.push(`/attraction/${item.no}`)
     })
-    
 
     naver.maps.Event.addListener(marker, 'click', (e) => {
       e.domEvent.stopPropagation()
@@ -122,7 +134,13 @@ export function updateMyMarkerPosition(myMarker, lat, lng) {
   }
 }
 
-export async function loadAttractionMarkers({ map, myMarker, setMarkersRef, showSearchButtonRef, router }) {
+export async function loadAttractionMarkers({
+  map,
+  myMarker,
+  setMarkersRef,
+  showSearchButtonRef,
+  router
+}) {
   const bounds = map.getBounds()
   const sw = bounds.getSW()
   const ne = bounds.getNE()

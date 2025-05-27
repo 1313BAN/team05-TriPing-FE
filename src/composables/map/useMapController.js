@@ -28,7 +28,7 @@ export function useMapController({ router }) {
       icon: {
         url: '/assets/icons/my-location.png',
         size: new naver.maps.Size(36, 36),
-        anchor: new naver.maps.Point(18, 36),
+        anchor: new naver.maps.Point(18, 18),
         scaledSize: new naver.maps.Size(36, 36)
       },
       zIndex: 999999,
