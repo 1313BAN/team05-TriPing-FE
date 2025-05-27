@@ -10,7 +10,7 @@
         style="box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1), 0 -2px 4px -2px rgba(0,0,0,0.1);"
       >
         <div class="overflow-y-auto flex flex-col gap-4 items-center justify-center">
-          <!-- ✅ 추천 전 텍스트 -->
+          <!-- 추천 전 -->
           <transition name="fade-smooth">
             <div v-if="!started" class="text-center flex flex-col items-center justify-center w-full">
               <h2 class="md:text-2xl text-xl font-bold">AI 관광지 추천</h2>
@@ -21,7 +21,7 @@
             </div>
           </transition>
 
-          <!-- ⏳ 로딩 중 -->
+          <!-- 로딩 중 -->
           <transition name="fade-smooth">
             <div v-if="loading" class="text-center flex flex-col items-center justify-center w-full">
               <p class="text-gray-600 mb-4">방문 기록 분석 중... 🤖</p>
@@ -29,7 +29,7 @@
             </div>
           </transition>
 
-          <!-- ✅ 추천 결과 -->
+          <!-- 추천 결과 -->
           <transition-group name="fade-stagger" tag="div" class="flex flex-col gap-3 w-full">
             <RecommendedCard
               v-for="item in results"
@@ -40,7 +40,7 @@
           </transition-group>
         </div>
 
-        <!-- ✅ 버튼 영역 (닫기 유지) -->
+        <!-- 버튼 영역 -->
         <div class="flex flex-col items-center gap-3 pt-4">
           <Button
             v-if="!started"

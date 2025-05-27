@@ -9,7 +9,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Panel from 'primevue/panel'
 import Image from 'primevue/image'
 import Paginator from 'primevue/paginator'
-
+import Skeleton from 'primevue/skeleton'
 import ToastService from 'primevue/toastservice'
 import ConfirmationService from 'primevue/confirmationservice'
 
@@ -26,6 +26,7 @@ export default {
     app.component('Panel', Panel)
     app.component('Image', Image)
     app.component('Paginator', Paginator)
+    app.component('Skeleton', Skeleton)
     app.use(ToastService)
     app.use(ConfirmationService)
   }

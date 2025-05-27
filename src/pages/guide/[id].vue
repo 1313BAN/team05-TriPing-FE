@@ -1,12 +1,20 @@
 <template>
-  <div v-if="!guideLoaded" class="flex justify-center items-center h-[300px]">
-    <div class="text-lg text-gray-500 animate-pulse">AI 가이드를 생성 중이에요...</div>
-  </div>
 
-  <div v-else class="p-6 max-w-3xl mx-auto space-y-8 pb-32">
+  <div v-if="!guideLoaded" class="p-6 max-w-3xl mx-auto space-y-4">
+    <div class="text-center text-xl text-gray-500 my-8">AI 가이드북을 생성하고 있습니다... 🤖</div>
+    <Skeleton height="2rem" width="70%" />
+    <Skeleton height="1.5rem" width="90%" />
+    <Skeleton height="10rem" />
+    <Skeleton height="2rem" width="60%" />
+    <Skeleton height="1.5rem" width="80%" />
+    <Skeleton height="10rem" />
+  </div>
+  <transition name="fade-up" appear>
+    <div v-if="guideLoaded" class="p-6 max-w-3xl mx-auto space-y-8 pb-32">
+
     <h1 class="md:text-3xl text-2xl font-bold text-gray-800 flex items-center gap-2">
   <i
-    class="pi pi-angle-left text-gray-600 text-2xl cursor-pointer"
+    class="pi pi-angle-left text-gray-600 text-3xl cursor-pointer pr-2"
     @click="$router.go(-1)"
   ></i>
   {{ guide.title }} 여행 가이드
@@ -218,12 +226,14 @@
 
     <ScrollTop class="z-50 text-primary bottom-8" behavior="smooth" :threshold="400" />
   </div>
+  </transition>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
 import Card from 'primevue/card'
 import ScrollTop from 'primevue/scrolltop'
+import { useVisitedGuideStore } from '@/stores/visitedGuideStore'
 
 const props = defineProps({
   id: [String, Number],
@@ -339,16 +349,31 @@ watch(
   { immediate: true }
 )
 
+
+const visitedStore = useVisitedGuideStore()
+
 async function fetchGuide(id) {
+  const start = Date.now()
   try {
     const res = await fetch(`http://localhost:8080/attraction/guide/${id}`)
     if (!res.ok) throw new Error('가이드 API 호출 실패')
     const data = await res.json()
-    console.log(data)
+
+    const alreadyVisited = visitedStore.has(id)
+    visitedStore.add(id)
+
+    const elapsed = Date.now() - start
+    const delay = !alreadyVisited && elapsed < 2000 ? 2000 - elapsed : 0
+
+    // 최소 지연 이후에 guide 표시
+    await new Promise((resolve) => setTimeout(resolve, delay))
     guide.value = data
   } catch (err) {
     console.error('[GuidePage] API 오류:', err)
     guide.value = null
   }
 }
+
+
+
 </script>

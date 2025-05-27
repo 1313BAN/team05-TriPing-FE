@@ -61,12 +61,12 @@ function handleClick() {
 }
 
 const handleItemClick = (locationData) => {
-  console.log('🗺️ 지도 이동 요청:', locationData)
+  console.log('지도 이동 요청:', locationData)
   
   // 부모 컴포넌트(DynamicMap)로 위치 정보 전달
   emit('move-to-location', locationData)
   showDrawer.value = false
-  uiStore.closeRecommendDrawer()  // ✅ 추가
+  uiStore.closeRecommendDrawer()
 }
 
 watch(visible, (newVal) => {
