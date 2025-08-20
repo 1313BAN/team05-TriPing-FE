@@ -1,6 +1,18 @@
 import api from './index'
 
+// 로그인 상태 확인 함수
+const isLoggedIn = () => {
+  const token = localStorage.getItem('accessToken')
+  return !!token
+}
+
 export const createVisitLog = async ({ attractionNo, enteredAt, exitedAt }) => {
+  // 로그인되지 않은 경우 API 호출하지 않고 특별한 응답 반환
+  if (!isLoggedIn()) {
+    console.log('🔐 비로그인 사용자 - 방문 기록을 생성하지 않습니다.')
+    return { isNotLoggedIn: true } // 비로그인 상태임을 알리는 특별한 응답
+  }
+
   try {
     const res = await api.post('/visit-log', {
       attractionNo,

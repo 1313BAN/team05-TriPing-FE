@@ -44,12 +44,20 @@ export function useVisitTracker() {
           exitedAt: Date.now()
         })
 
+        const name = visitState.lastConfirmedName || '관광지'
+        
+        // 비로그인 사용자인 경우
+        if (success?.isNotLoggedIn) {
+          console.log(`방문 감지: ${name}, 체류 시간: ${formatDurationToReadable(duration)} (비로그인)`)
+          toastRef.value?.showNotLoggedIn(name, duration)
+          return
+        }
+
         const visitLogId = success?.id
         console.log(success)
         console.log(`방문 기록 ID: ${visitLogId}`)
 
         if (success) {
-          const name = visitState.lastConfirmedName || '관광지'
           console.log(`방문 완료: ${name}, 체류 시간: ${formatDurationToReadable(duration)}`)
           toastRef.value?.show(name, duration)
 
@@ -86,12 +94,20 @@ export function useVisitTracker() {
           exitedAt: Date.now()
         })
 
+        const name = visitState.lastConfirmedName || '관광지'
+        
+        // 비로그인 사용자인 경우
+        if (success?.isNotLoggedIn) {
+          console.log(`방문 감지: ${name}, 체류 시간: ${formatDurationToReadable(duration)} (비로그인)`)
+          toastRef.value?.showNotLoggedIn(name, duration)
+          return
+        }
+
         const visitLogId = success?.id
         console.log(success)
         console.log(`방문 기록 ID: ${visitLogId}`)
 
         if (success) {
-          const name = visitState.lastConfirmedName || '관광지'
           console.log(`방문 완료: ${name}, 체류 시간: ${formatDurationToReadable(duration)}`)
           toastRef.value?.show(name, duration)
 

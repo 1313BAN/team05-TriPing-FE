@@ -20,6 +20,13 @@
   {{ guide.title }} 여행 가이드
 </h1>
 
+    <!-- 더미 데이터 안내 -->
+    <div class="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+      <p class="text-yellow-700 text-xs md:text-sm text-center">
+        ⚠️ OpenAI API 사용 중지로 인해 더미 데이터가 표시됩니다
+      </p>
+    </div>
+
 
     <!-- 탭 버튼 -->
     <div class="sticky top-0 z-40 pt-4 pb-6 blur-gradient-header">
@@ -349,16 +356,77 @@ watch(
   { immediate: true }
 )
 
-
-const visitedStore = useVisitedGuideStore()
-
 async function fetchGuide(id) {
   const start = Date.now()
   try {
-    const res = await fetch(`https://tri-ping.site/attraction/guide/${id}`)
-    if (!res.ok) throw new Error('가이드 API 호출 실패')
-    const data = await res.json()
+    // 기존 API 호출 주석 처리
+    // const res = await fetch(`http://localhost:8080/attraction/guide/${id}`)
+    // if (!res.ok) throw new Error('가이드 API 호출 실패')
+    // const data = await res.json()
 
+    // 더미 데이터
+    const data = {
+      title: props.title || "관광지",
+      description: [
+        "소개: 아름다운 자연경관과 역사적 가치를 지닌 대표적인 관광명소입니다",
+        "특징: 사계절 내내 다양한 볼거리와 체험거리를 제공합니다",
+        "추천: 가족단위 방문객과 사진 애호가들에게 특히 인기가 높습니다"
+      ],
+      operationInfo: [
+        "runtime: 09:00 - 18:00",
+        "holiday: 매주 월요일",
+        "fee: 성인 5,000원, 청소년 3,000원, 어린이 2,000원"
+      ],
+      contactInfo: [
+        "phone number: 02-1234-5678",
+        "website: www.example-tourist-site.kr"
+      ],
+      info: "이곳은 오랜 역사와 전통을 자랑하는 대표적인 관광명소입니다.\n\n자연의 아름다움과 인공의 조화가 완벽하게 어우러진 이 장소는 방문객들에게 잊을 수 없는 추억을 선사합니다. 특히 봄과 가을에는 더욱 아름다운 풍경을 감상할 수 있어 많은 관광객들이 찾아옵니다.\n\n다양한 문화체험 프로그램과 교육프로그램도 운영되고 있어 학습과 힐링을 동시에 경험할 수 있습니다.",
+      history: "이 관광지는 수백 년의 역사를 간직하고 있습니다.\n\n조선시대부터 중요한 역할을 해온 이곳은 시대의 변천사와 함께 발전해왔습니다. 일제강점기와 한국전쟁을 거치면서도 그 원형을 잘 보존하고 있어 역사적 가치가 매우 높습니다.\n\n현재는 문화재로 지정되어 체계적인 관리와 보존이 이루어지고 있으며, 후세에 소중한 문화유산을 전해주기 위해 지속적인 노력을 기울이고 있습니다.",
+      tip: [
+        "이른 아침이나 늦은 오후에 방문하시면 더욱 아름다운 풍경을 감상할 수 있습니다",
+        "편한 신발을 착용하시고 충분한 물을 준비해주세요",
+        "사진 촬영 시 플래시 사용을 금지하는 구역이 있으니 안내판을 확인해주세요",
+        "주말과 공휴일에는 방문객이 많으니 평일 방문을 추천합니다"
+      ],
+      photoSpots: [
+        "정문 입구의 전통 건축물 앞",
+        "중앙 정원의 연못과 다리",
+        "전망대에서 바라본 전체 전경",
+        "계절별 꽃밭과 나무들"
+      ],
+      restaurants: [
+        {
+          name: "전통찻집 향기",
+          description: "전통차와 한과를 맛볼 수 있는 고풍스러운 찻집",
+          distance: "도보 3분"
+        },
+        {
+          name: "맛있는 한정식",
+          description: "신선한 재료로 만든 정갈한 한정식 전문점",
+          distance: "도보 5분"
+        },
+        {
+          name: "카페 브리즈",
+          description: "관광지 전망을 감상하며 커피를 즐길 수 있는 카페",
+          distance: "도보 2분"
+        }
+      ],
+      video: {
+        title: "관광지 소개 영상",
+        description: "관광지 소개 영상입니다.",
+        url: "https://www.youtube.com/watch?v=0JCGDm9NqzI"
+      },
+      amenities: [
+        "주차장 (무료, 200대 수용 가능)",
+        "화장실 (장애인 전용 화장실 포함)",
+        "매점 및 기념품샵",
+        "안내센터 및 가이드 서비스",
+        "휠체어 대여 서비스"
+      ]
+    }
+
+    const visitedStore = useVisitedGuideStore()
     const alreadyVisited = visitedStore.has(id)
     visitedStore.add(id)
 
@@ -369,7 +437,7 @@ async function fetchGuide(id) {
     await new Promise((resolve) => setTimeout(resolve, delay))
     guide.value = data
   } catch (err) {
-    console.error('[GuidePage] API 오류:', err)
+    console.error('[GuidePage] 더미 데이터 처리 오류:', err)
     guide.value = null
   }
 }

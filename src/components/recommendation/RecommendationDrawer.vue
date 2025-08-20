@@ -9,15 +9,21 @@
         }"
         style="box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1), 0 -2px 4px -2px rgba(0,0,0,0.1);"
       >
-        <div class="overflow-y-auto flex flex-col gap-4 items-center justify-center">
+        <div class="overflow-y-auto flex flex-col items-center justify-center">
           <!-- 추천 전 텍스트 -->
           <transition name="fade-smooth">
             <div v-if="!started" class="text-center flex flex-col items-center justify-center w-full">
               <h2 class="md:text-2xl text-xl font-bold">AI 관광지 추천</h2>
-              <p class="text-gray-600 leading-relaxed md:text-base text-sm mt-3">
+              <p class="text-gray-600 leading-relaxed md:text-base text-sm mt-3 mb-3">
                 현재 위치와 방문 이력을 분석했어요 🤖<br />
                 다음 행선지는 <strong class="font-semibold">AI가 추천하는 곳</strong>으로 떠나보세요!
               </p>
+              <!-- 더미 데이터 안내 -->
+              <div class="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <p class="text-yellow-700 text-xs md:text-sm text-center">
+                  ⚠️ OpenAI API 사용 중지로 인해 더미 데이터가 표시됩니다
+                </p>
+              </div>
             </div>
           </transition>
 
@@ -28,6 +34,8 @@
               <RecommendedSkeleton v-for="i in 3" :key="i" />
             </div>
           </transition>
+
+
 
           <!-- 추천 결과 -->
           <transition-group name="fade-stagger" tag="div" class="flex flex-col gap-3 w-full">

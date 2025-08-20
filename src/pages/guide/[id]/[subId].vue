@@ -17,6 +17,13 @@
       ></i>
       {{ guide.title }} - {{ guide.subtitle }} 가이드
     </h1>
+
+        <!-- 더미 데이터 안내 -->
+        <div class="w-full bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <p class="text-yellow-700 text-xs md:text-sm text-center">
+            ⚠️ OpenAI API 사용 중지로 인해 더미 데이터가 표시됩니다
+          </p>
+        </div>
         <!-- 탭 버튼 -->
         <div class="sticky top-0 z-40 pt-4 pb-6 blur-gradient-header" v-if="tabs.length">
           <div class="relative">
@@ -149,11 +156,26 @@ async function fetchSubGuide(title, subtitle) {
   try {
     const start = Date.now()
 
-    const res = await fetch(
-      `https://tri-ping.site/attraction/subguide?title=${encodeURIComponent(title)}&subTitle=${encodeURIComponent(subtitle)}`
-    )
-    if (!res.ok) throw new Error('서브 가이드 API 호출 실패')
-    const data = await res.json()
+    // 기존 API 호출 주석 처리
+    // const res = await fetch(
+    //   `http://localhost:8080/attraction/subguide?title=${encodeURIComponent(title)}&subTitle=${encodeURIComponent(subtitle)}`
+    // )
+    // if (!res.ok) throw new Error('서브 가이드 API 호출 실패')
+    // const data = await res.json()
+
+    // 더미 데이터
+    const data = {
+      title: title || "관광지",
+      subtitle: subtitle || "세부 명소",
+      info: `${subtitle || "세부 명소"}는 ${title || "관광지"}의 대표적인 볼거리 중 하나입니다.\n\n이 장소는 특별한 역사적 의미와 아름다운 경관을 자랑하며, 방문객들에게 깊은 인상을 남기는 곳입니다. 세심하게 관리되고 있는 이곳에서는 사계절 내내 다른 매력을 발견할 수 있습니다.\n\n전문 가이드의 설명과 함께 둘러보시면 더욱 풍부한 경험을 하실 수 있습니다.`,
+      tip: [
+        "이곳을 방문하실 때는 편안한 복장을 권장합니다",
+        "사진 촬영 시 다른 관람객들을 배려해 주세요",
+        "안내판의 설명을 꼼꼼히 읽어보시면 더 많은 정보를 얻을 수 있습니다",
+        "날씨가 좋은 날에 방문하시면 더욱 아름다운 모습을 감상할 수 있습니다"
+      ],
+      history: `${subtitle || "세부 명소"}의 역사는 매우 오래되었습니다.\n\n과거부터 현재까지 이어져 온 이곳의 이야기는 우리나라의 문화와 전통을 잘 보여주는 소중한 자료입니다. 여러 차례의 보수와 복원을 거쳐 현재의 모습을 갖추게 되었으며, 앞으로도 지속적인 관리를 통해 후세에 전해질 예정입니다.\n\n각 시대별로 다른 특징을 보여주는 이곳은 역사 교육의 장으로도 활용되고 있습니다.`
+    }
 
     const elapsed = Date.now() - start
     const alreadyVisited = visitedSubStore.has(title, subtitle)
@@ -164,7 +186,7 @@ async function fetchSubGuide(title, subtitle) {
 
     guide.value = data
   } catch (err) {
-    console.error('[SubGuidePage] API 오류:', err)
+    console.error('[SubGuidePage] 더미 데이터 처리 오류:', err)
     guide.value = null
   }
 }

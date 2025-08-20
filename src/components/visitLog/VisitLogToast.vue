@@ -20,5 +20,15 @@ function show(attractionName, durationMs) {
   })
 }
 
-defineExpose({ show })
+function showNotLoggedIn(attractionName, durationMs) {
+  const durationText = formatDurationToReadable(durationMs)
+
+  toast.add({
+    summary: `${attractionName} 방문 완료`,
+    detail: `${durationText} 동안 머물렀어요. 로그인하면 방문 기록을 저장할 수 있습니다.`,
+    life: 5000
+  })
+}
+
+defineExpose({ show, showNotLoggedIn })
 </script>

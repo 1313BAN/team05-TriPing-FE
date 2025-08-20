@@ -12,13 +12,13 @@ export function useMapController({ router }) {
   const locationStore = useLocationStore()
   const { lat, lng } = storeToRefs(locationStore)
 
-  const showAttractionPins = ref(false)
+  const showAttractionPins = ref(true)
   const showSearchButton = ref(false)
 
   function initMap() {
     map.value = new naver.maps.Map('map', {
       center: new naver.maps.LatLng(lat.value, lng.value),
-      zoom: 16,
+      zoom: 17,
       keyboardShortcuts: false
     })
 
