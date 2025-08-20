@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 
 export const useDevStore = defineStore('dev', {
   state: () => ({
-    devMode: false
+    devMode: true
   }),
   persist: true
 })
