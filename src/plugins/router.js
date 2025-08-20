@@ -19,8 +19,8 @@ const routes = [
   { path: '/guide/:id', component: Guide, props: true },
   { path: '/guide/:id/:subId', component: SubGuide, props: true },
 
-  // 로그인 필요
-  { path: '/', component: Home, meta: { requiresAuth: true } },
+  // 로그인 없이 접근 가능
+  { path: '/', component: Home },
   { path: '/visit-log', component: VisitLog, meta: { requiresAuth: true } },
   { path: '/mypage', component: MyPage, meta: { requiresAuth: true } },
   { path: '/mypage/edit', component: EditProfileView, meta: { requiresAuth: true } },

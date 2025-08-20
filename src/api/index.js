@@ -23,7 +23,14 @@ const api = axios.create({
 
 // request 인터셉터
 api.interceptors.request.use((config) => {
-  const publicPaths = ['/auth/login', '/auth/signup', '/auth/forgot-password']
+  const publicPaths = [
+    '/auth/login', 
+    '/auth/signup', 
+    '/auth/forgot-password',
+    '/attraction/entered',  // 지오펜싱 진입 확인
+    '/attraction/markers',  // 뷰포트 마커 조회
+    '/attraction/',         // attraction 정보 조회 (상세정보, sub-attractions 포함)
+  ]
   const isPublic = publicPaths.some((path) => config.url?.includes(path))
   if (isPublic) {
     return config
