@@ -3,7 +3,7 @@ import { useLocationStore } from '../../stores/locationStore'
 import { animateMarker } from '@/utils/mapUtils'
 // 전역에서 선언되어야 유지됨
 let watchId = null
-let mockPosition = { lat: 37.5665, lng: 126.978 } // 초기 mock 위치
+let mockPosition = { lat: 37.566, lng: 126.9772 } // 초기 mock 위치
 let marker = null
 
 export function setMockMarker(m) {
