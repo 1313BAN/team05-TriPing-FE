@@ -1,12 +1,20 @@
 // composables/useGeolocationPermission.js
 import { ref, onMounted } from 'vue'
 import { startGlobalGeolocation } from './useGlobalGeolocation'
+import { useDevStore } from '../../stores/devStore'
 
 export function useGeolocationPermission(minDistance = 5) {
   const permissionState = ref('checking') // checking | granted | prompt | denied
   const errorMessage = ref('')
+  const devStore = useDevStore()
 
   const requestPermission = () => {
+    // 개발자 모드일 때는 위치 권한 요청하지 않음
+    if (devStore.devMode) {
+      permissionState.value = 'granted'
+      return
+    }
+
     navigator.geolocation.getCurrentPosition(
       () => {
         startGlobalGeolocation(minDistance)
@@ -28,6 +36,12 @@ export function useGeolocationPermission(minDistance = 5) {
   }
 
   onMounted(async () => {
+    // 개발자 모드일 때는 위치 권한 확인하지 않고 바로 granted 상태로 설정
+    if (devStore.devMode) {
+      permissionState.value = 'granted'
+      return
+    }
+
     if (!('permissions' in navigator)) {
       permissionState.value = 'denied'
       errorMessage.value = '브라우저가 위치 권한을 지원하지 않습니다.'

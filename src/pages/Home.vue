@@ -1,9 +1,14 @@
 <script setup>
 import { useGeolocationPermission } from '../composables/location/useGeolocationPermission'
 import DynamicMap from '../components/map/DynamicMap.vue'
+import WelcomeModal from '../components/common/WelcomeModal.vue'
 import { Button } from 'primevue'
+import { ref } from 'vue'
 
 const { permissionState, errorMessage, requestPermission } = useGeolocationPermission(5)
+
+// 환영 모달 표시 상태
+const showWelcomeModal = ref(false)
 </script>
 
 <template>
@@ -23,5 +28,8 @@ const { permissionState, errorMessage, requestPermission } = useGeolocationPermi
       <p class="text-lg font-semibold mb-2">서비스를 이용할 수 없습니다.</p>
       <p>{{ errorMessage }}</p>
     </div>
+
+    <!-- 처음 방문자 환영 모달 -->
+    <WelcomeModal v-model:visible="showWelcomeModal" />
   </div>
 </template>
